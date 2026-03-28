@@ -1,14 +1,8 @@
-from typing import TypedDict
+from app_types import UserData
 
 INFO = "[\033[34m!\033[0m] INFO:"
 ERR = "[\033[31m-\033[0m] ERROR:"
 OK = "[\033[32m+\033[0m] OK:"
-
-# type alias
-class UserData(TypedDict):
-    FirstName: str
-    LastName: str
-    Aliases: list[str]
 
 def print_all(data: UserData):
    print(data["FirstName"])
