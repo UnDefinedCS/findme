@@ -15,63 +15,145 @@
             <label for="last_name">Last Name:</label>
             <input type="text" id="last_name" name="last_name" required>
 
-            <label>Social Media Platforms:</label>
-            <div class="checkbox-group">
-                <label class="checkbox-label">
-                    <input type="checkbox" name="social_media" value="Discord">
-                    <span>Discord</span>
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" name="social_media" value="Facebook">
-                    <span>Facebook</span>
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" name="social_media" value="GitHub">
-                    <span>GitHub</span>
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" name="social_media" value="Instagram">
-                    <span>Instagram</span>
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" name="social_media" value="LinkedIn">
-                    <span>LinkedIn</span>
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" name="social_media" value="Reddit">
-                    <span>Reddit</span>
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" name="social_media" value="Snapchat">
-                    <span>Snapchat</span>
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" name="social_media" value="Telegram">
-                    <span>Telegram</span>
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" name="social_media" value="TikTok">
-                    <span>TikTok</span>
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" name="social_media" value="Twitch">
-                    <span>Twitch</span>
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" name="social_media" value="X (Formally Twitter)">
-                    <span>X (Formally Twitter)</span>
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" name="social_media" value="YouTube">
-                    <span>YouTube</span>
-                </label>
+            <div id="aliases-container">
+                <div class="alias-section" data-index="0">
+                    <label for="alias_0">Online Alias:</label>
+                    <div class="alias-toggle-row">
+                        <input type="text" id="alias_0" name="alias" required>
+                        <button type="button" class="platforms-toggle toggle-button">Select Platforms</button>
+                    </div>
+
+                    <div class="social-media-section social-media-hidden">
+                        <label>Social Media Platforms:</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social_media_0" value="Discord">
+                                <span>Discord</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social_media_0" value="Facebook">
+                                <span>Facebook</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social_media_0" value="GitHub">
+                                <span>GitHub</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social_media_0" value="Instagram">
+                                <span>Instagram</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social_media_0" value="LinkedIn">
+                                <span>LinkedIn</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social_media_0" value="Reddit">
+                                <span>Reddit</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social_media_0" value="Snapchat">
+                                <span>Snapchat</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social_media_0" value="Telegram">
+                                <span>Telegram</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social_media_0" value="TikTok">
+                                <span>TikTok</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social_media_0" value="Twitch">
+                                <span>Twitch</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social_media_0" value="X (Formally Twitter)">
+                                <span>X (Formally Twitter)</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social_media_0" value="YouTube">
+                                <span>YouTube</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <label for="alias">Online Alias:</label>
-            <input type="text" id="alias" name="alias" required>
+            <button type="button" id="add-alias-btn" class="add-alias-button">+ Add Another Alias</button>
 
             <button type="submit">Search</button>
         </form>
+        <script>
+            let aliasCount = 1;
+            const platformOptions = [
+                'Discord', 'Facebook', 'GitHub', 'Instagram', 'LinkedIn', 'Reddit',
+                'Snapchat', 'Telegram', 'TikTok', 'Twitch', 'X (Formally Twitter)', 'YouTube'
+            ];
+
+            document.getElementById('add-alias-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                const container = document.getElementById('aliases-container');
+                const newSection = document.createElement('div');
+                newSection.className = 'alias-section';
+                newSection.dataset.index = aliasCount;
+
+                let checkboxesHTML = '';
+                platformOptions.forEach(platform => {
+                    checkboxesHTML += `
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="social_media_${aliasCount}" value="${platform}">
+                            <span>${platform}</span>
+                        </label>
+                    `;
+                });
+
+                newSection.innerHTML = `
+                    <label for="alias_${aliasCount}">Online Alias:</label>
+                    <div class="alias-toggle-row">
+                        <input type="text" id="alias_${aliasCount}" name="alias" required>
+                        <button type="button" class="platforms-toggle toggle-button">Select Platforms</button>
+                        <button type="button" class="remove-alias-btn remove-button">Remove</button>
+                    </div>
+
+                    <div class="social-media-section social-media-hidden">
+                        <label>Social Media Platforms:</label>
+                        <div class="checkbox-group">
+                            ${checkboxesHTML}
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(newSection);
+                attachAliasEvents(newSection);
+                aliasCount++;
+            });
+
+            function attachAliasEvents(section) {
+                const toggleBtn = section.querySelector('.platforms-toggle');
+                const socialMediaSection = section.querySelector('.social-media-section');
+                const removeBtn = section.querySelector('.remove-alias-btn');
+
+                toggleBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    socialMediaSection.classList.toggle('social-media-hidden');
+                    toggleBtn.textContent = socialMediaSection.classList.contains('social-media-hidden') 
+                        ? 'Select Platforms' 
+                        : 'Hide Platforms';
+                });
+
+                if (removeBtn) {
+                    removeBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        section.remove();
+                    });
+                }
+            }
+
+            // Attach events to initial section
+            document.querySelectorAll('.alias-section').forEach(section => {
+                attachAliasEvents(section);
+            });
+        </script>
     {% else %}
         {% include 'loading.html' %}
     {% endif %}
