@@ -8,3 +8,11 @@ class UserData(TypedDict):
     FirstName: str
     LastName: str
     Aliases: list[str]
+
+class SearchResult(TypedDict):
+    """
+    { query: str, url: str, site_title: str }
+    """
+    query: str
+    url: str
+    site_title: str
