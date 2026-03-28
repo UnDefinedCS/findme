@@ -28,11 +28,11 @@ body {
 }
 
 .navbar-title {
-    color: #00ffff;
+    color: #00ff00;
     margin: 0;
     font-size: 24px;
     letter-spacing: 2px;
-    text-shadow: 0 0 10px #00ffff;
+    text-shadow: 0 0 10px #00ff00;
 }
 
 .navbar-title-link {
@@ -41,8 +41,8 @@ body {
 }
 
 .navbar-title-link:hover .navbar-title {
-    color: #00ff00;
-    text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+    color: #00ffff;
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
 }
 
 .navbar-menu {
@@ -75,7 +75,7 @@ h1 {
     text-align: center;
     text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
     letter-spacing: 2px;
-    color: #00ffff;
+    color: #00ff00;
     max-width: 600px;
     margin: 30px auto 20px;
 }
@@ -264,6 +264,19 @@ button:active {
     margin-top: 8px;
     text-shadow: none;
     padding: 5px 0;
+    transition: all 0.3s ease;
+}
+
+input[type="checkbox"]:hover + span,
+.checkbox-label:has(input[type="checkbox"]:hover) {
+    color: #00ffff;
+    text-shadow: 0 0 5px #00ffff;
+}
+
+input[type="checkbox"]:checked + span,
+.checkbox-label:has(input[type="checkbox"]:checked) {
+    color: #00ffff;
+    text-shadow: 0 0 5px #00ffff;
 }
 
 input[type="checkbox"] {
@@ -280,13 +293,19 @@ input[type="checkbox"] {
 }
 
 input[type="checkbox"]:hover {
-    box-shadow: 0 0 10px rgba(0, 255, 0, 0.6);
+    border-color: #00ffff;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
+    background: rgba(0, 255, 255, 0.1);
 }
 
 input[type="checkbox"]:checked {
-    background: linear-gradient(135deg, #00ff00 0%, #00ccff 100%);
+    background: linear-gradient(135deg, #00ffff 0%, #00ccff 100%);
     border-color: #00ffff;
-    box-shadow: 0 0 15px rgba(0, 255, 0, 0.8), inset 0 0 5px rgba(0, 255, 255, 0.3);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.8), inset 0 0 5px rgba(0, 255, 255, 0.3);
+}
+
+input[type="checkbox"]:checked:hover {
+    box-shadow: 0 0 20px rgba(0, 255, 255, 1), inset 0 0 8px rgba(0, 255, 255, 0.5);
 }
 
 input[type="checkbox"]:checked::after {
