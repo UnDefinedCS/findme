@@ -35,6 +35,16 @@ body {
     text-shadow: 0 0 10px #00ffff;
 }
 
+.navbar-title-link {
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.navbar-title-link:hover .navbar-title {
+    color: #00ff00;
+    text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+}
+
 .navbar-menu {
     display: flex;
     gap: 15px;
