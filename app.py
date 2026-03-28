@@ -1,7 +1,10 @@
 from flask import Flask, render_template, request, jsonify
-from data_gen import generate_queries
+from data_gen import generate_queries, collect_data
+from app_types import UserData
+import asyncio
 
 app = Flask(__name__)
+
 
 @app.route("/")
 def index():
@@ -11,22 +14,41 @@ def index():
 def submit_info():
     first_name = request.form['first_name']
     last_name = request.form['last_name']
-    social_media = request.form.getlist('social_media')
     alias = request.form.getlist('alias')
+    combinedSocialAlias = []
+    for i in range(len(alias)):
+        social_media = request.form.getlist('social_media_' + str(i))
+        element = []
+        if(len(social_media) != 0):
+            element = [alias[i], social_media]
+        else:
+            element = [alias[i], None]
+        combinedSocialAlias.append(element)
 
-    print("First name: " + first_name)
-    print("Last name: " + last_name) 
-    print("Online alias(es): ")
-    for a in alias:
-        print(a + ", ")
-    print("Alias(es) associated with: ")
-    for media in social_media:
-        print(media + ", ")
-    
-    # query_handler()
-    return render_template("index.html", loading=True)
+    rendered_index = render_template("index.html", loading=True)
 
-#async def query_handler():
+    asyncio.run(send_query_to_exe(first_name, last_name, combinedSocialAlias))
+
+    return rendered_index
+
+async def query_handler(first, last, social):
+    newCombination = []
+    for i in range(len(social)):
+        if(social[i][1] != None):
+            for j in range(len(social[i][1])):
+                element = [social[i][0], social[i][1][j]]
+                newCombination.append(element)
+        else:
+            newCombination.append([social[i][0], None])
+    u = UserData(
+        FirstName = first, 
+        LastName = last, 
+        Aliases = newCombination)
+    queries = generate_queries(u)
+    await collect_data(queries)
+
+async def send_query_to_exe(first, last, social):
+    asyncio.create_task(query_handler(first, last, social))
 
 @app.route("/about")
 def about_page():
