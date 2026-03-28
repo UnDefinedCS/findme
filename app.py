@@ -14,4 +14,9 @@ def submit_info():
     alias = request.form['alias']
 
     print("First name: " + first_name, "Last name: " + last_name, "Online alias: " + alias, "Alias associated with: " + social_media)
-    
+    return render_template("index.html", loading=True)
+
+#TESTING ONLY
+@app.route("/loading")
+def animation_test():
+    return render_template("loading.html")

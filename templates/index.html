@@ -6,20 +6,24 @@
 </head>
 <body>
     <h1>FindMe - OSINT Tool</h1>
-    <form method="POST">
-        <label for="first_name">First Name:</label>
-        <input type="text" id="first_name" name="first_name" required>
+    {% if not loading %}
+        <form method="POST">
+            <label for="first_name">First Name:</label>
+            <input type="text" id="first_name" name="first_name" required>
 
-        <label for="last_name">Last Name:</label>
-        <input type="text" id="last_name" name="last_name" required>
+            <label for="last_name">Last Name:</label>
+            <input type="text" id="last_name" name="last_name" required>
 
-        <label for="social_media">Social Media Platform:</label>
-        <input type="text" id="social_media" name="social_media" placeholder="e.g., Twitter, Instagram, TikTok" required>
+            <label for="social_media">Social Media Platform:</label>
+            <input type="text" id="social_media" name="social_media" placeholder="e.g., Twitter, Instagram, TikTok" required>
 
-        <label for="alias">Online Alias:</label>
-        <input type="text" id="alias" name="alias" required>
+            <label for="alias">Online Alias:</label>
+            <input type="text" id="alias" name="alias" required>
 
-        <button type="submit">Search</button>
-    </form>
+            <button type="submit">Search</button>
+        </form>
+    {% else %}
+        {% include 'loading.html' %}
+    {% endif %}
 </body>
 </html>
