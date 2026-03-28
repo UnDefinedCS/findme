@@ -24,13 +24,20 @@ def list_aliases():
             return aliases
         
         alias = data.split(",")
+        if len(alias) == 1:
+            # username and no known connections
+            aliases.append([data,None])
         if len(alias) == 2:
+            # username with one linked alias
             aliases.append(alias)
         elif len(alias) > 2:
-            aliases.append([alias[0],alias[1]])
+            # same username with multiple connections
+            for i in range(1,len(alias)):
+                aliases.append([alias[0],alias[i]])
 
 def prompt():
     print(f"{INFO} Enter All Inputs Comma Seperated")
+    print(f" |__ To not provide input press ENTER")
     nameData = str(input("Full Name: ")).strip()
     firstName = nameData
     lastName = None
@@ -45,7 +52,7 @@ def prompt():
         "LastName": lastName,
         "Aliases": aliases
     }
-    
+
     #print_all(data)
     queries = generate_queries(data)
     asyncio.run(collect_data(queries))
