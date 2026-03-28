@@ -10,10 +10,19 @@ def index():
 def submit_info():
     first_name = request.form['first_name']
     last_name = request.form['last_name']
-    social_media = request.form['social_media']
-    alias = request.form['alias']
+    social_media = request.form.getlist('social_media')
+    alias = request.form.getlist('alias')
 
-    print("First name: " + first_name, "Last name: " + last_name, "Online alias: " + alias, "Alias associated with: " + social_media)
+    print("First name: " + first_name)
+    print("Last name: " + last_name) 
+    print("Online alias(es): ")
+    for a in alias:
+        print(a + ", ")
+    print("Alias(es) associated with: ")
+    for media in social_media:
+        print(media + ", ")
+    
+
     return render_template("index.html", loading=True)
 
 #TESTING ONLY
