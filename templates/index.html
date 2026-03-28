@@ -156,12 +156,14 @@
 
             // Form validation
             document.querySelector('form').addEventListener('submit', function(e) {
+                const firstName = document.getElementById('first_name').value.trim();
+                const lastName = document.getElementById('last_name').value.trim();
                 const aliasInputs = document.querySelectorAll('input[name="alias"]');
                 const hasAtLeastOneAlias = Array.from(aliasInputs).some(input => input.value.trim() !== '');
                 
-                if (!hasAtLeastOneAlias) {
+                if (!firstName && !lastName && !hasAtLeastOneAlias) {
                     e.preventDefault();
-                    alert('Please enter at least one alias');
+                    alert('Please fill in at least one field (First Name, Last Name, or an Alias)');
                 }
             });
         </script>
