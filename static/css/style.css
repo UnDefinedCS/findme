@@ -2,9 +2,23 @@
     box-sizing: border-box;
 }
 
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
 body {
     font-family: 'Courier New', monospace;
-    background: #000000;
+    background: linear-gradient(-45deg, #000000, #1a1a1a, #0a2a0a, #0d0d0d, #000000);
+    background-size: 300% 300%;
+    animation: gradientShift 10s ease infinite;
     color: #00ff00;
     margin: 0;
     padding: 0;
