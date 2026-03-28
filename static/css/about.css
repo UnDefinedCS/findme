@@ -1,0 +1,30 @@
+
+
+.about-content {
+    min-height: calc(100vh - 90px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 24px;
+}
+
+.about {
+    max-width: 900px;
+    margin: 0;
+    text-align: center;
+    font-size: clamp(1.2rem, 2.4vw, 1.5rem);
+    line-height: 1.6;
+    color: #00ffff;
+    text-shadow: 0 0 8px rgba(0, 255, 255, 0.45);
+}
+
+.WhoAreWe {
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    color: #00ff00;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.7), 0 0 20px rgba(0, 255, 0, 0.5);
+    text-align: center;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
