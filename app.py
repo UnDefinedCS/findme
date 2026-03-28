@@ -25,6 +25,10 @@ def submit_info():
 
     return render_template("index.html", loading=True)
 
+@app.route("/about")
+def about_page():
+    return render_template("about.html")
+
 #TESTING ONLY
 @app.route("/loading")
 def animation_test():
