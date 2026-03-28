@@ -19,7 +19,7 @@
                 <div class="alias-section" data-index="0">
                     <label for="alias_0">Online Alias:</label>
                     <div class="alias-toggle-row">
-                        <input type="text" id="alias_0" name="alias" required>
+                        <input type="text" id="alias_0" name="alias">
                         <button type="button" class="platforms-toggle toggle-button">Select Platforms</button>
                     </div>
 
@@ -110,7 +110,7 @@
                 newSection.innerHTML = `
                     <label for="alias_${aliasCount}">Online Alias:</label>
                     <div class="alias-toggle-row">
-                        <input type="text" id="alias_${aliasCount}" name="alias" required>
+                        <input type="text" id="alias_${aliasCount}" name="alias">
                         <button type="button" class="platforms-toggle toggle-button">Select Platforms</button>
                         <button type="button" class="remove-alias-btn remove-button">Remove</button>
                     </div>
@@ -152,6 +152,17 @@
             // Attach events to initial section
             document.querySelectorAll('.alias-section').forEach(section => {
                 attachAliasEvents(section);
+            });
+
+            // Form validation
+            document.querySelector('form').addEventListener('submit', function(e) {
+                const aliasInputs = document.querySelectorAll('input[name="alias"]');
+                const hasAtLeastOneAlias = Array.from(aliasInputs).some(input => input.value.trim() !== '');
+                
+                if (!hasAtLeastOneAlias) {
+                    e.preventDefault();
+                    alert('Please enter at least one alias');
+                }
             });
         </script>
     {% else %}
