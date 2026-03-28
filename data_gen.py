@@ -52,7 +52,6 @@ def generate_queries(data: UserData):
         if (lName and lName and service_provider):
             queries.append(f"{username} {fName} {lName} {service_provider}")
 
-    print(f"{INFO} Query Count -> {len(queries)}")
     return queries
 
 async def search_duckduckgo(query: str):
@@ -65,6 +64,13 @@ async def search_duckduckgo(query: str):
 
         url = f"https://duckduckgo.com/?q={quote(query)}&ia=web"
         await page.goto(url)
+
+        # check the contents of the page after search
+        content = await page.content()
+        if "No results found" in content:
+            print(f"{INFO} No results from search")
+            await browser.close()
+            return results
 
         try:
             ol = await page.wait_for_selector("ol.react-results--main", timeout=60000)
@@ -94,7 +100,11 @@ async def search_duckduckgo(query: str):
         return results
 
 async def collect_data(queries: list[str]):
-    print(f"[!] INFO: Query Count -> {len(queries)}")
+    if (len(queries) == 0):
+        print(f"{ERR} No Queries were Generated")
+        return
+
+    print(f"{INFO} Query Count -> {len(queries)}")
     print("-" * 64)
 
     results_collection: list[SearchResult] = []
