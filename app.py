@@ -30,7 +30,7 @@ def submit_info():
 
 @app.route("/about")
 def about_page():
-    return render_template("about.html")
+    return render_template("about.html", noAbout=True)
 
 #TESTING ONLY
 @app.route("/loading")
