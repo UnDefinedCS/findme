@@ -16,11 +16,11 @@ def list_aliases():
     aliases = []
     print(f"{INFO} Format: alias,[github,reddit,twitter,...]")
     print(" |___ Example: ihatewindows11,reddit\n") # give spacing between the new info
-    print(f"{INFO} Enter DONE to continue.")
+    print(f"{INFO} When finished press Enter to continue.")
 
     while True:
         data = str(input("Online Alias: ")).strip()
-        if data == "DONE":
+        if data == "":
             return aliases
         
         alias = data.split(",")
@@ -38,12 +38,12 @@ def list_aliases():
 def prompt():
     print(f"{INFO} Enter All Inputs Comma Seperated")
     print(f" |__ To not provide input press ENTER")
-    nameData = str(input("Full Name: ")).strip()
+    nameData = str(input("First,Last Name: ")).strip()
     firstName = nameData
     lastName = None
     
-    if " " in nameData:
-        firstName,lastName = nameData.split(' ')
+    if "," in nameData:
+        firstName,lastName = nameData.split(',')
 
     aliases = list_aliases()
     
