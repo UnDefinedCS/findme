@@ -1,40 +1,142 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Courier New', monospace;
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 100%);
+    color: #00ff00;
     max-width: 600px;
     margin: 50px auto;
     padding: 20px;
+    min-height: 100vh;
+}
+
+h1 {
+    text-align: center;
+    text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+    letter-spacing: 2px;
+    color: #00ffff;
 }
 
 form {
     display: flex;
     flex-direction: column;
     gap: 15px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 30px;
+    border: 2px solid #00ff00;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3), inset 0 0 10px rgba(0, 255, 0, 0.1);
 }
 
 label {
     font-weight: bold;
     margin-top: 10px;
+    color: #00ffff;
+    text-shadow: 0 0 5px #00ffff;
 }
 
 input[type="text"],
 input[type="email"],
 select {
-    padding: 8px;
-    border: 1px solid #ccc;
+    padding: 12px;
+    background: rgba(10, 14, 39, 0.8);
+    border: 1px solid #00ff00;
     border-radius: 4px;
     font-size: 14px;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+select:focus {
+    outline: none;
+    border-color: #00ffff;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5), inset 0 0 5px rgba(0, 255, 255, 0.2);
+    color: #00ffff;
+}
+
+input[type="text"]::placeholder {
+    color: #00aa00;
 }
 
 button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #00ff00 0%, #00ccff 100%);
+    color: #0a0e27;
+    border: 2px solid #00ffff;
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    font-family: 'Courier New', monospace;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5), 0 0 20px rgba(0, 204, 255, 0.3);
 }
 
 button:hover {
-    background-color: #0056b3;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.8), 0 0 30px rgba(0, 204, 255, 0.6);
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+.checkbox-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 15px;
+    padding: 0;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    color: #00ff00;
+    font-weight: normal;
+    margin-top: 8px;
+    text-shadow: none;
+    padding: 5px 0;
+}
+
+input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #00ff00;
+    border-radius: 3px;
+    background: rgba(10, 14, 39, 0.8);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+}
+
+input[type="checkbox"]:hover {
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.6);
+}
+
+input[type="checkbox"]:checked {
+    background: linear-gradient(135deg, #00ff00 0%, #00ccff 100%);
+    border-color: #00ffff;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.8), inset 0 0 5px rgba(0, 255, 255, 0.3);
+}
+
+input[type="checkbox"]:checked::after {
+    content: '✓';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0a0e27;
+    font-weight: bold;
+    font-size: 14px;
 }
