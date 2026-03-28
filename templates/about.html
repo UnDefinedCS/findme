@@ -1,3 +1,5 @@
 <body>
+    {% include 'nav.html' %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <p class="about">This project is a social media username checker built using Flask. It allows users to check the availability of their desired username across multiple social media platforms. The application provides a user-friendly interface where users can input their desired username and select the platforms they want to check against. The backend processes the request and returns the availability status for each selected platform, helping users find a unique and consistent online identity.</p>
 </body>

@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify
+from data_gen import generate_queries
 
 app = Flask(__name__)
 
@@ -22,8 +23,10 @@ def submit_info():
     for media in social_media:
         print(media + ", ")
     
-
+    # query_handler()
     return render_template("index.html", loading=True)
+
+#async def query_handler():
 
 @app.route("/about")
 def about_page():
