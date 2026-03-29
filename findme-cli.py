@@ -100,8 +100,27 @@ async def prompt():
     print(f"{OK} Scanning Finished!")
     save_results(output)
 
+import sys
 def main():
-    asyncio.run(prompt())
+    if len(sys.argv) == 2 and (str(sys.argv[1]) == "--help" or str(sys.argv[1]) == "-h"):
+        print(f"Usage: {sys.argv[0]} [option]\n")
+        print("  Options:")
+        print("  -h/--help              Show this Page")
+        print("  --data-removal         Learn how to remove your data\n")
+        return
+    
+    if len(sys.argv) == 2 and str(sys.argv[1]) == "--data-removal":
+        print("""
+How can I remove my data from these search results?
+
+Connections to accounts are often made due to hard-coded linking, this can be from simple social media account linking to hardcoding a url on your website.
+
+It is recommended to use multiple usernames and to try as best as possible to never allow your accounts to cross paths, for certain websites you can control your visibility, it is recommended to set this to private where search engines when they try going to your links return a 404 not found.
+You can request Google or other Engine Providers to remove a search result from their feed if a url leads to a 404 as it will be considered a dead-link. Avoid posting sensitive information on social media as it can be saved and made extremely difficult to remove, ensure your images you post
+do not carry location meta-data from your mobile phone camera or show potential artifacts that can be used to figure out where the image was taken if near your residence.
+""")
+    else:
+        asyncio.run(prompt())
 
 if __name__ == "__main__":
     main()
