@@ -4,9 +4,10 @@
             <h2 class="navbar-title">FindMe</h2>
         </a>
         <div class="navbar-menu">
-            <button id="theme-toggle" class="nav-button theme-toggle-btn">
-                <span class="theme-icon">☀️</span>
-            </button>
+            <label class="theme-switch-label">
+                <input type="checkbox" id="theme-toggle" class="theme-checkbox">
+                <span class="theme-text">Dark Mode</span>
+            </label>
             {% if not noAbout %}
                 <a href="{{ url_for('about_page') }}">
                     <button class="nav-button">About</button>

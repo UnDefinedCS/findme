@@ -64,6 +64,7 @@ body {
 .navbar-menu {
     display: flex;
     gap: 15px;
+    align-items: center;
 }
 
 .nav-button {
@@ -77,6 +78,10 @@ body {
     font-size: 14px;
     transition: all 0.3s ease;
     text-shadow: 0 0 5px var(--primary-color);
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .nav-button:hover {

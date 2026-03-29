@@ -47,82 +47,17 @@
     --alias-bg: rgba(46, 125, 50, 0.05);
 }
 
-/* Theme Toggle Checkbox Styles */
-.theme-switch-label {
+/* Theme Toggle Button Styles */
+.theme-toggle-btn {
+    min-width: 45px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    padding: 8px 16px;
-    border: 2px solid var(--primary-color);
-    border-radius: 4px;
-    background: transparent;
-    transition: all 0.3s ease;
-    height: 40px;
+    justify-content: center;
 }
 
-.theme-switch-label:hover {
-    background: var(--alias-bg);
-    box-shadow: 0 0 10px var(--hover-shadow);
-    border-color: var(--secondary-color);
-}
-
-.theme-checkbox {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 18px;
-    height: 18px;
-    border: 2px solid var(--primary-color);
-    border-radius: 3px;
-    background: var(--input-bg);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 0 5px var(--shadow-color);
-    position: relative;
-}
-
-.theme-checkbox:hover {
-    border-color: var(--secondary-color);
-    box-shadow: 0 0 10px var(--hover-shadow);
-}
-
-.theme-checkbox:checked {
-    background: linear-gradient(135deg, var(--secondary-color) 0%, var(--button-gradient-end) 100%);
-    border-color: var(--secondary-color);
-    box-shadow: 0 0 15px var(--hover-shadow);
-}
-
-.theme-checkbox:checked::after {
-    content: '✓';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: var(--button-text);
-    font-weight: bold;
-    font-size: 14px;
-}
-
-.theme-text {
-    color: var(--primary-color);
-    font-family: 'Courier New', monospace;
-    font-size: 14px;
-    font-weight: bold;
-    text-shadow: 0 0 5px var(--primary-color);
-    transition: all 0.3s ease;
-}
-
-.theme-switch-label:hover .theme-text {
-    color: var(--secondary-color);
-    text-shadow: 0 0 8px var(--secondary-color);
-}
-
-[data-theme="light"] .theme-text {
-    text-shadow: none;
-}
-
-[data-theme="light"] .theme-switch-label:hover .theme-text {
-    text-shadow: none;
+.theme-icon {
+    font-size: 18px;
+    display: inline-block;
 }
 
 /* Light Mode Specific Overrides */
