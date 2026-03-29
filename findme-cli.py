@@ -31,7 +31,7 @@ def list_aliases():
         elif len(alias) > 2:
             # same username with multiple connections
             for i in range(1,len(alias)):
-                aliases.append([alias[0],alias[i]])
+                aliases.append([alias[0].strip(), alias[i].strip()])
 
 def list_context() -> list[str]:
     print(f"{INFO} What is the target context?")
@@ -49,6 +49,22 @@ def list_context() -> list[str]:
 
     return ctx
 
+def save_results(results):
+    save_data = str(input("Do you want to save [y/N]: ")).lower().strip()
+    if len(save_data) == 0:
+        return
+    
+    file_name = ""
+    while len(file_name) == 0:
+        file_name = str(input("File Name: "))
+
+    with open(file_name,"w") as outFile:
+        for r,s in results:
+            if s == -1:
+                outFile.write(f"{OK} | {r['query']} -> {r['url']}")
+            else:
+                outFile.write(f"{OK} Score -> {s} | {r['query']} -> {r['url']}")
+
 async def prompt():
     print(f"{INFO} Enter All Inputs Comma Seperated")
     print(f" |__ To not provide input press ENTER")
@@ -64,8 +80,8 @@ async def prompt():
     target_ctx = list_context()
     
     data: UserData = {
-        "FirstName": firstName,
-        "LastName": lastName,
+        "FirstName": firstName.strip(),
+        "LastName": lastName.strip(),
         "Aliases": aliases,
         "Context": target_ctx
     }
@@ -75,6 +91,7 @@ async def prompt():
     result_data = await collect_data(queries)
     output = await review(data, result_data)
     print(f"{OK} Scanning Finished!")
+    save_results(output)
 
 def main():
     asyncio.run(prompt())
