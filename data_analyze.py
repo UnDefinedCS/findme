@@ -1,5 +1,4 @@
 import asyncio
-from bs4 import BeautifulSoup
 from playwright.async_api import async_playwright
 
 from app_types import UserData, SearchResult
@@ -10,6 +9,15 @@ def site_contains(page_content:str, target_str):
     return target_str.lower() in page_content
 
 async def check_site_content(page, base_data:UserData, url: str):
+    global site_cache, ignore_cache
+
+    # init checking
+    if url in ignore_cache:
+        return False,-1
+    
+    if url in site_cache:
+        return True,-1
+
     fName = base_data["FirstName"]
     lName = base_data["LastName"]
     aliases = base_data["Aliases"]
@@ -77,7 +85,8 @@ async def check_site_content(page, base_data:UserData, url: str):
         ctx_score = min(ctx_score, 2)
         confidence += ctx_score
 
-        acceptable_confidence = 2.5 + (len(aliases) * 0.3)
+        # avoid extreme number increase from many aliases
+        acceptable_confidence = (2.5 + (len(aliases) * 0.3)) if (2.5 + (len(aliases) * 0.3)) < 3 else 3
         result = "Accepted" if confidence >= acceptable_confidence else "Invalid"
 
         print(f"{INFO} Confidence [{result}] {confidence:.2f} -> {url}")
@@ -86,6 +95,8 @@ async def check_site_content(page, base_data:UserData, url: str):
         print(f"{ERR} Url most likely timed out")
         return False,-1
 
+site_cache: list[str] = []
+ignore_cache: list[str] = []
 BATCH_SIZE = 15
 async def run_batch(browser, base_data, batch):
     pages = [await browser.new_page() for _ in batch]
@@ -101,14 +112,15 @@ async def run_batch(browser, base_data, batch):
     return results
 
 async def review(base_data: UserData, results: list[SearchResult]):
+    global site_cache, ignore_cache
+
     print(f"{INFO} Reviewing Discovered Data")
     print(f" |___ number of results: {len(results)}")
 
-    acceptable_confidence = 2.5 + (len(base_data["Aliases"]) * 0.3)
-    print(f"{INFO} Acceptable Level: {acceptable_confidence}")
+    # avoid extreme number increase from many aliases
+    acceptable_confidence = (2.5 + (len(base_data["Aliases"]) * 0.3)) if (2.5 + (len(base_data["Aliases"]) * 0.3)) < 3 else 3
 
-    site_cache: list[str] = []
-    ignore_cache: list[str] = []
+    print(f"{INFO} Acceptable Level: {acceptable_confidence}")
 
     filtered_results = []
 
@@ -121,14 +133,6 @@ async def review(base_data: UserData, results: list[SearchResult]):
 
                 for result, (high_confidence, score) in zip(batch, batch_results):
                     url = result["url"]
-
-                    if url in site_cache:
-                        filtered_results.append((result,score))
-                        continue
-
-                    if url in ignore_cache:
-                        continue
-
                     if high_confidence:
                         site_cache.append(url)
                         filtered_results.append((result,score))
