@@ -167,7 +167,7 @@
         fetch('/get-results')
             .then(response => response.json())
             .then(data => {
-                if (data.complete && data.results) {
+                if (data.complete === true && data.results != null) {
                     displayResults(data.results, data.graph);
                 } else if (pollAttempts < maxAttempts) {
                     pollAttempts++;
@@ -196,7 +196,8 @@
 
         if (Array.isArray(results) && results.length > 0) {
             let tableHTML = '<table class="results-table"><thead><tr>';
-            const headers = Object.keys(results[0]);
+            console.log(results);
+            const headers = Object.keys(results[0][0]);
             headers.forEach(header => {
                 tableHTML += `<th>${escapeHtml(header)}</th>`;
             });
@@ -204,7 +205,7 @@
             results.forEach(result => {
                 tableHTML += '<tr>';
                 headers.forEach(header => {
-                    const value = result[header];
+                    const value = result[0][header];
                     let cellContent = formatCellContent(value);
                     tableHTML += `<td>${cellContent}</td>`;
                 });
@@ -283,4 +284,3 @@
 
     window.addEventListener('load', pollForResults);
 </script>
-<script src="{{ url_for('static', filename='js/theme.js') }}?v=2"></script>

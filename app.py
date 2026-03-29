@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from data_gen import generate_queries, collect_data
 from app_types import UserData
+from data_analyze import review
 import threading
 import asyncio
 
@@ -89,8 +90,9 @@ async def query_handler(first, last, social, additional):
     )
     queries = generate_queries(u)
     data = await collect_data(queries)
+    data = await review(u, data)
     results = data
-    
+
     # Generate graph after results are collected
     if search_params:
         generate_graph_data(search_params, data)
@@ -188,12 +190,11 @@ def generate_graph_data(search_params, results):
         # Add result nodes (right side) - centered vertically, limit to 8
         result_y_start = padding + (max_nodes_per_side - result_count) * (vertical_spacing / 2)
         result_y = result_y_start
-        result_count_actual = 0
         
         if results:
             for idx, result in enumerate(results):
                 result_node_id = f"result_{idx}"
-                title = result.get('site_title', result.get('url', 'Unknown'))[:20]
+                title = result[0].get('site_title', result[0].get('url', 'Unknown'))[:20]
                 nodes.append({
                     'id': result_node_id,
                     'label': title,
@@ -201,11 +202,10 @@ def generate_graph_data(search_params, results):
                     'y': result_y,
                     'type': 'result'
                 })
-                result_count_actual += 1
                 result_y += vertical_spacing
                 
                 # Create edges
-                query = result.get('query', '').lower()
+                query = result[0].get('query', '').lower()
                 
                 if 'first_name' in node_map and search_params['first_name'].lower() in query:
                     edges.append({
@@ -278,8 +278,6 @@ def generate_graph_data(search_params, results):
         import traceback
         traceback.print_exc()
         graph_data = None
-
-
 
 def start_thread():
     global thread
