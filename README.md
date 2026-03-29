@@ -17,16 +17,25 @@ This tool currently does `not` utilize any LLM for data confidence analysis, thi
 As a reminder, this application does `NOT` save your actions anywhere off of the device it is ran on, the developers do `NOT` want to collect
 your user or behavioural data.
 
-## Usage:
-This tool is primarily developed for Linux, this tool does work on WSL (Windows Sub-System for Linux)
+## Build
 ```bash
 # clone the repo
 git clone https://github.com/UnDefinedCS/findme.git
 cd findme
 
-# run environment preperation
-./prepare.sh
+# prepare venv
+/usr/bin/python3 -m venv venv
+cd venv
+source bin/activate
+
+# install python dependencies
+pip install flask playwright
+
+# install playwright
+playwright install
 ```
+
+## Usage:
 
 You can run this straight from the terminal via:
 ```bash
