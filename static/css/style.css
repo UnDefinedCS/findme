@@ -1,0 +1,526 @@
+* {
+    box-sizing: border-box;
+    transition: background-color 0.6s ease, color 0.6s ease, border-color 0.6s ease, box-shadow 0.6s ease, text-shadow 0.6s ease;
+}
+
+*:not(.no-transition) {
+    transition: background-color 0.6s ease, color 0.6s ease, border-color 0.6s ease, box-shadow 0.6s ease, text-shadow 0.6s ease;
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+body {
+    font-family: 'Courier New', monospace;
+    background: linear-gradient(90deg, var(--bg-gradient-1), var(--bg-gradient-2), var(--bg-gradient-3), var(--bg-gradient-4), var(--bg-gradient-5));
+    background-size: 300% 300%;
+    animation: gradientShift 10s ease infinite;
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+.navbar {
+    background: var(--navbar-bg);
+    border-bottom: 2px solid var(--border-color);
+    padding: 0;
+    box-shadow: 0 0 15px var(--shadow-color);
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 15px 20px;
+}
+
+.navbar-title {
+    color: var(--primary-color);
+    margin: 0;
+    font-size: 24px;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.navbar-title-link {
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.navbar-title-link:hover .navbar-title {
+    color: var(--secondary-color);
+    text-shadow: 0 0 10px var(--secondary-color), 0 0 20px var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+.navbar-menu {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.nav-button {
+    padding: 10px 16px;
+    background: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 5px var(--primary-color);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 10px var(--shadow-color), 0 0 20px var(--hover-shadow);
+}
+
+.nav-button:hover {
+    background: var(--alias-bg);
+    box-shadow: 0 0 10px var(--hover-shadow);
+    color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    text-shadow: 0 0 8px var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+h1 {
+    text-align: center;
+    text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
+    letter-spacing: 2px;
+    color: var(--primary-color);
+    max-width: 600px;
+    margin: 30px auto 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background: var(--form-bg);
+    padding: 30px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 0 20px var(--shadow-color), inset 0 0 10px var(--shadow-color);
+    max-width: 600px;
+    margin: 0 auto 50px;
+}
+
+label {
+    font-weight: bold;
+    color: var(--secondary-color);
+    text-shadow: 0 0 5px var(--secondary-color);
+}
+
+input[type="text"],
+input[type="email"],
+select {
+    padding: 12px;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 14px;
+    color: var(--text-color);
+    font-family: 'Courier New', monospace;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 5px var(--shadow-color);
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+select:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 15px var(--hover-shadow), inset 0 0 5px var(--hover-shadow);
+    color: var(--secondary-color);
+}
+
+input[type="text"]::placeholder {
+    color: var(--placeholder-color);
+}
+
+button {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, var(--button-gradient-start) 0%, var(--button-gradient-end) 100%);
+    color: var(--button-text);
+    border: 2px solid var(--secondary-color);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    font-family: 'Courier New', monospace;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px var(--shadow-color), 0 0 20px var(--hover-shadow);
+}
+
+button:hover {
+    box-shadow: 0 0 20px var(--shadow-color), 0 0 30px var(--hover-shadow);
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+.toggle-button {
+    padding: 10px 16px;
+    background: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 5px var(--primary-color);
+}
+
+.toggle-button:hover {
+    background: var(--alias-bg);
+    box-shadow: 0 0 10px var(--hover-shadow);
+    color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    text-shadow: 0 0 8px var(--secondary-color);
+}
+
+.alias-toggle-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.alias-toggle-row input {
+    flex: 1;
+}
+
+.social-media-hidden {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+#social-media-section:not(.social-media-hidden) {
+    max-height: 600px;
+}
+
+.add-alias-button {
+    padding: 10px 16px;
+    background: transparent;
+    color: var(--primary-color);
+    border: 2px dashed var(--primary-color);
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 5px var(--primary-color);
+    margin-top: 10px;
+}
+
+.add-alias-button:hover {
+    background: var(--alias-bg);
+    box-shadow: 0 0 10px var(--hover-shadow);
+    color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    text-shadow: 0 0 8px var(--secondary-color);
+}
+
+.remove-button {
+    padding: 8px 12px;
+    background: rgba(255, 0, 0, 0.1);
+    color: var(--remove-button-color);
+    border: 2px solid var(--remove-button-color);
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 5px var(--remove-button-color);
+}
+
+.remove-button:hover {
+    background: rgba(255, 0, 0, 0.2);
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+    color: #ff4444;
+    border-color: #ff4444;
+    text-shadow: 0 0 8px #ff4444;
+}
+
+.alias-section {
+    padding: 15px;
+    margin: 10px 0;
+    border-left: 3px solid var(--primary-color);
+    background: var(--alias-bg);
+    border-radius: 4px;
+}
+
+.checkbox-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 15px;
+    padding: 0;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    color: var(--primary-color);
+    font-weight: normal;
+    margin-top: 8px;
+    text-shadow: none;
+    padding: 5px 0;
+    transition: all 0.3s ease;
+}
+
+input[type="checkbox"]:hover + span,
+.checkbox-label:has(input[type="checkbox"]:hover) {
+    color: var(--secondary-color);
+    text-shadow: 0 0 5px var(--secondary-color);
+}
+
+input[type="checkbox"]:checked + span,
+.checkbox-label:has(input[type="checkbox"]:checked) {
+    color: var(--secondary-color);
+    text-shadow: 0 0 5px var(--secondary-color);
+}
+
+input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--primary-color);
+    border-radius: 3px;
+    background: var(--input-bg);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 5px var(--shadow-color);
+}
+
+input[type="checkbox"]:hover {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 15px var(--hover-shadow);
+    background: var(--alias-bg);
+}
+
+input[type="checkbox"]:checked {
+    background: linear-gradient(135deg, var(--secondary-color) 0%, var(--button-gradient-end) 100%);
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 15px var(--hover-shadow), inset 0 0 5px var(--hover-shadow);
+}
+
+input[type="checkbox"]:checked:hover {
+    box-shadow: 0 0 20px var(--hover-shadow), inset 0 0 8px var(--hover-shadow);
+}
+
+input[type="checkbox"]:checked::after {
+    content: '✓';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--button-text);
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* ===== LIGHT MODE SPECIFIC STYLES ===== */
+[data-theme="light"] {
+    font-family: 'Courier New', monospace;
+}
+
+[data-theme="light"] body {
+    font-family: 'Courier New', monospace;
+}
+
+[data-theme="light"] .navbar {
+    background: var(--navbar-bg);
+    border-bottom: 2px solid var(--border-color);
+    box-shadow: 0 0 15px var(--shadow-color);
+}
+
+[data-theme="light"] .navbar-title {
+    color: var(--primary-color);
+    text-shadow: none;
+}
+
+[data-theme="light"] .navbar-title-link:hover .navbar-title {
+    color: var(--secondary-color);
+    text-shadow: none;
+}
+
+[data-theme="light"] h1 {
+    text-shadow: none;
+    color: var(--primary-color);
+}
+
+[data-theme="light"] form {
+    background: var(--form-bg);
+    border: 2px solid var(--border-color);
+    box-shadow: 0 0 20px var(--shadow-color), inset 0 0 10px var(--shadow-color);
+}
+
+[data-theme="light"] label {
+    color: var(--label-color);
+    text-shadow: none;
+}
+
+[data-theme="light"] input[type="text"],
+[data-theme="light"] input[type="email"],
+[data-theme="light"] select {
+    font-family: 'Courier New', monospace;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    box-shadow: 0 0 5px var(--shadow-color);
+}
+
+[data-theme="light"] input[type="text"]:focus,
+[data-theme="light"] input[type="email"]:focus,
+[data-theme="light"] select:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 15px var(--hover-shadow), inset 0 0 5px var(--hover-shadow);
+    color: var(--secondary-color);
+}
+
+[data-theme="light"] input[type="text"]::placeholder,
+[data-theme="light"] input[type="email"]::placeholder {
+    color: var(--placeholder-color);
+}
+
+[data-theme="light"] .nav-button {
+    background: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    text-shadow: none;
+    text-decoration: none;
+    font-family: 'Courier New', monospace;
+    transition: all 0.3s ease;
+}
+
+[data-theme="light"] .nav-button:hover {
+    background: var(--alias-bg);
+    box-shadow: 0 0 10px var(--hover-shadow);
+    color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    text-shadow: none;
+}
+
+[data-theme="light"] .toggle-button {
+    background: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    text-shadow: none;
+    font-family: 'Courier New', monospace;
+}
+
+[data-theme="light"] .toggle-button:hover {
+    background: var(--alias-bg);
+    box-shadow: 0 0 10px var(--hover-shadow);
+    color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    text-shadow: none;
+}
+
+[data-theme="light"] .add-alias-button {
+    background: transparent;
+    color: var(--primary-color);
+    border: 2px dashed var(--primary-color);
+    text-shadow: none;
+    font-family: 'Courier New', monospace;
+}
+
+[data-theme="light"] .add-alias-button:hover {
+    background: var(--alias-bg);
+    box-shadow: 0 0 10px var(--hover-shadow);
+    color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    text-shadow: none;
+}
+
+[data-theme="light"] .remove-button {
+    background: rgba(255, 0, 0, 0.1);
+    color: var(--remove-button-color);
+    border: 2px solid var(--remove-button-color);
+    text-shadow: none;
+    font-family: 'Courier New', monospace;
+}
+
+[data-theme="light"] .remove-button:hover {
+    background: rgba(255, 0, 0, 0.2);
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+    color: #ff4444;
+    border-color: #ff4444;
+    text-shadow: none;
+}
+
+[data-theme="light"] .alias-section {
+    padding: 15px;
+    margin: 10px 0;
+    border-left: 3px solid var(--primary-color);
+    background: var(--alias-bg);
+    border-radius: 4px;
+}
+
+[data-theme="light"] .checkbox-label {
+    color: var(--primary-color);
+    text-shadow: none;
+    font-family: 'Courier New', monospace;
+}
+
+[data-theme="light"] input[type="checkbox"]:hover + span,
+[data-theme="light"] .checkbox-label:has(input[type="checkbox"]:hover) {
+    color: var(--secondary-color);
+    text-shadow: none;
+}
+
+[data-theme="light"] input[type="checkbox"]:checked + span,
+[data-theme="light"] .checkbox-label:has(input[type="checkbox"]:checked) {
+    color: var(--secondary-color);
+    text-shadow: none;
+}
+
+[data-theme="light"] input[type="checkbox"] {
+    border: 2px solid var(--primary-color);
+    background: var(--input-bg);
+    box-shadow: 0 0 5px var(--shadow-color);
+}
+
+[data-theme="light"] input[type="checkbox"]:hover {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 10px var(--hover-shadow);
+    background: var(--alias-bg);
+}
+
+[data-theme="light"] input[type="checkbox"]:checked {
+    background: linear-gradient(135deg, var(--secondary-color) 0%, var(--button-gradient-end) 100%);
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 15px var(--hover-shadow), inset 0 0 5px var(--hover-shadow);
+}
+
+[data-theme="light"] input[type="checkbox"]:checked:hover {
+    box-shadow: 0 0 20px var(--hover-shadow), inset 0 0 8px var(--hover-shadow);
+}

@@ -1,0 +1,290 @@
+<div class="loading-container">
+    <img id="loadingGif" class="loading-gif" src="{{ url_for('static', filename='images/loading.gif') }}" alt="Loading...">
+    <div id="graphDisplayContainer" class="graph-display-container hidden">
+        <h3>Connection Graph</h3>
+        <div id="graphDisplay"></div>
+    </div>
+</div>
+
+<style>
+    .loading-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 60vh;
+        min-width: 100%;
+        position: relative;
+    }
+
+    .loading-gif {
+        width: 25%;
+        max-width: 200px;
+        transition: opacity 0.3s ease;
+    }
+
+    .loading-gif.hidden {
+        display: none;
+    }
+
+    .graph-display-container {
+        position: absolute;
+        width: 90%;
+        max-width: 900px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: rgba(0, 20, 20, 0.8);
+        border: 2px solid var(--primary-color);
+        border-radius: 8px;
+        padding: 20px;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+
+    .graph-display-container.show {
+        opacity: 1;
+    }
+
+    .graph-display-container.hidden {
+        display: none;
+    }
+
+    .graph-display-container h3 {
+        color: var(--primary-color);
+        margin: 0 0 15px 0;
+        text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        flex-shrink: 0;
+    }
+
+    #graphDisplay {
+        flex: 1;
+        width: 100%;
+        overflow: auto;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 10px;
+        background: rgba(0, 10, 10, 0.9);
+        border: 1px solid rgba(0, 255, 0, 0.3);
+        border-radius: 4px;
+    }
+
+    #graphDisplay svg {
+        overflow: auto;  /* scroll if necessary */
+        min-width: fit-content;
+        min-height: fit-content;
+        padding: 10px;
+    }
+
+    #graphDisplay::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    #graphDisplay::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 4px;
+    }
+
+    #graphDisplay::-webkit-scrollbar-thumb {
+        background: rgba(0, 255, 0, 0.5);
+        border-radius: 4px;
+    }
+
+    #graphDisplay::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 255, 0, 0.7);
+    }
+
+    /* Light mode styles for graph container */
+    [data-theme="light"] .graph-display-container {
+        background: rgba(255, 255, 255, 0.95);
+        border: 2px solid var(--primary-color);
+    }
+
+    [data-theme="light"] .graph-display-container h3 {
+        color: var(--primary-color);
+        text-shadow: none;
+    }
+
+    [data-theme="light"] #graphDisplay {
+        background: rgba(255, 255, 255, 0.98);
+        border: 1px solid var(--border-color);
+    }
+
+    [data-theme="light"] #graphDisplay::-webkit-scrollbar-track {
+        background: rgba(200, 205, 212, 0.3);
+    }
+
+    [data-theme="light"] #graphDisplay::-webkit-scrollbar-thumb {
+        background: rgba(21, 101, 192, 0.5);
+    }
+
+    [data-theme="light"] #graphDisplay::-webkit-scrollbar-thumb:hover {
+        background: rgba(21, 101, 192, 0.7);
+    }
+
+    /* Light mode SVG graph styling */
+    [data-theme="light"] #graphDisplay svg circle {
+        fill: rgba(21, 101, 192, 0.2);
+        stroke: #000000;
+    }
+
+    [data-theme="light"] #graphDisplay .input-node {
+        fill: rgba(21, 101, 192, 0.15);
+        stroke: #000000;
+    }
+
+    [data-theme="light"] #graphDisplay .result-node {
+        fill: rgba(0, 0, 0, 0.1);
+        stroke: #000000;
+    }
+
+    [data-theme="light"] #graphDisplay .edge {
+        stroke: #000000;
+        opacity: 0.5;
+    }
+
+    [data-theme="light"] #graphDisplay text,
+    [data-theme="light"] #graphDisplay .label,
+    [data-theme="light"] #graphDisplay .label-result {
+        fill: #000000;
+    }
+
+    [data-theme="light"] #graphDisplay polygon {
+        fill: #000000;
+    }
+</style>
+
+{% include 'results.html' %}
+
+<div id="accessor" data-query-num="{{ query_num }}"></div>
+
+<script>
+    const pollInterval = 500;
+    let pollAttempts = 0;
+    const queryNum = Number(document.getElementById("accessor").dataset.queryNum);
+    const maxAttempts = 60 * queryNum;
+
+    function pollForResults() {
+        fetch('/get-results')
+            .then(response => response.json())
+            .then(data => {
+                if (data.complete === true && data.results != null) {
+                    displayResults(data.results, data.graph);
+                } else if (pollAttempts < maxAttempts) {
+                    pollAttempts++;
+                    setTimeout(pollForResults, pollInterval);
+                } else {
+                    showNoResults();
+                }
+            })
+            .catch(error => {
+                console.error('Error polling for results:', error);
+                if (pollAttempts < maxAttempts) {
+                    pollAttempts++;
+                    setTimeout(pollForResults, pollInterval);
+                }
+            });
+    }
+
+    function displayResults(results, graphData) {
+        const loadingGif = document.getElementById('loadingGif');
+        const graphDisplayContainer = document.getElementById('graphDisplayContainer');
+        const graphDisplay = document.getElementById('graphDisplay');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const resultsContent = document.getElementById('resultsContent');
+
+        loadingGif.classList.add('hidden');
+
+        if (Array.isArray(results) && results.length > 0) {
+            let tableHTML = '<table class="results-table"><thead><tr>';
+            console.log(results);
+            const headers = Object.keys(results[0][0]);
+            headers.forEach(header => {
+                tableHTML += `<th>${escapeHtml(header)}</th>`;
+            });
+            tableHTML += '</tr></thead><tbody>';
+            results.forEach(result => {
+                tableHTML += '<tr>';
+                headers.forEach(header => {
+                    const value = result[0][header];
+                    let cellContent = formatCellContent(value);
+                    tableHTML += `<td>${cellContent}</td>`;
+                });
+                tableHTML += '</tr>';
+            });
+            tableHTML += '</tbody></table>';
+            resultsContent.innerHTML = tableHTML;
+        } else if (typeof results === 'object' && results !== null) {
+            let tableHTML = '<table class="results-table"><thead><tr><th>Key</th><th>Value</th></tr></thead><tbody>';
+            Object.entries(results).forEach(([key, value]) => {
+                let cellContent = formatCellContent(value);
+                tableHTML += `<tr><td>${escapeHtml(key)}</td><td>${cellContent}</td></tr>`;
+            });
+            tableHTML += '</tbody></table>';
+            resultsContent.innerHTML = tableHTML;
+        } else {
+            resultsContent.innerHTML = '<p class="no-results">No results found.</p>';
+        }
+
+        // Display graph in loading container if available
+        if (graphData) {
+            graphDisplay.innerHTML = graphData;
+            graphDisplayContainer.classList.remove('hidden');
+            graphDisplayContainer.classList.add('show');
+        }
+
+        resultsContainer.classList.add('show');
+    }
+
+    function formatCellContent(value) {
+        let stringValue = JSON.stringify(value);
+        const urlRegex = /(https?:\/\/[^\s"]+)/g;
+        
+        if (urlRegex.test(stringValue)) {
+            return stringValue.replace(urlRegex, (url) => {
+                // Remove trailing quotes or brackets that might be part of JSON
+                let cleanUrl = url.replace(/["'\]]+$/, '');
+                return `<a href="${escapeHtml(cleanUrl)}" target="_blank">${escapeHtml(cleanUrl)}</a>`;
+            });
+        }
+        
+        // Remove escape characters first
+        stringValue = stringValue.replace(/\\/g, '');
+        
+        // Remove outer quotes if it's a simple string
+        if ((stringValue.startsWith('"') && stringValue.endsWith('"')) ||
+            (stringValue.startsWith("'") && stringValue.endsWith("'"))) {
+            stringValue = stringValue.slice(1, -1);
+        }
+        
+        // If it's an array or object, clean up the internal quotes
+        if (stringValue.startsWith('[') || stringValue.startsWith('{')) {
+            // Remove all quotes from the JSON representation
+            stringValue = stringValue.replace(/"/g, '').replace(/'/g, '');
+            // Clean up extra spaces and commas
+            stringValue = stringValue.replace(/,\s*/g, ', ').trim();
+        }
+        
+        return escapeHtml(stringValue);
+    }
+
+    function showNoResults() {
+        const loadingGif = document.getElementById('loadingGif');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const resultsContent = document.getElementById('resultsContent');
+        loadingGif.classList.add('hidden');
+        resultsContent.innerHTML = '<p class="no-results">Search timed out. Please try again.</p>';
+        resultsContainer.classList.add('show');
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    window.addEventListener('load', pollForResults);
+</script>

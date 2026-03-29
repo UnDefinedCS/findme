@@ -1,0 +1,17 @@
+<nav class="navbar">
+    <div class="navbar-container">
+        <a href="{{ url_for('index') }}" class="navbar-title-link">
+            <h2 class="navbar-title">FindMe</h2>
+        </a>
+        <div class="navbar-menu">
+            <button class="theme-switch-button" id="theme-toggle">
+                <span class="theme-text">Dark Mode</span>
+            </button>
+            {% if not noAbout %}
+            <a href="{{ url_for('about_page') }}" class="nav-button">
+                <span>About</span>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</nav>

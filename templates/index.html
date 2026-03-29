@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FindMe - OSINT Tool</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/button/darkmode.css') }}?v=7">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=7">
+</head>
+<body>
+    {% include 'nav.html' %}
+    <h1>FindMe - OSINT Tool</h1>
+    {% if not loading %}
+        <form method="POST">
+            <label for="first_name">First Name:</label>
+            <input type="text" id="first_name" name="first_name">
+
+            <label for="last_name">Last Name:</label>
+            <input type="text" id="last_name" name="last_name">
+
+            <div id="aliases-container">
+                <div class="alias-section" data-index="0">
+                    <label for="alias_0">Online Alias:</label>
+                    <div class="alias-toggle-row">
+                        <input type="text" id="alias_0" name="alias">
+                        <button type="button" class="platforms-toggle toggle-button">Select Platforms</button>
+                    </div>
+
+                    <div class="social-media-section social-media-hidden">
+                        <label>Social Media Platforms:</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social_media_0" value="Facebook">
+                                <span>Facebook</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social_media_0" value="GitHub">
+                                <span>GitHub</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social_media_0" value="Instagram">
+                                <span>Instagram</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social_media_0" value="LinkedIn">
+                                <span>LinkedIn</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social_media_0" value="Reddit">
+                                <span>Reddit</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social_media_0" value="Snapchat">
+                                <span>Snapchat</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social_media_0" value="Telegram">
+                                <span>Telegram</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social_media_0" value="TikTok">
+                                <span>TikTok</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social_media_0" value="Twitch">
+                                <span>Twitch</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social_media_0" value="X (Formally Twitter)">
+                                <span>X (Formally Twitter)</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="social_media_0" value="YouTube">
+                                <span>YouTube</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" id="add-alias-btn" class="add-alias-button">+ Add Another Alias</button>
+
+            <label for="more_context">More Context (Comma-Separated):</label>
+            <input type="text" id="more_context" name="more_context">
+
+            <button type="submit">Search</button>
+        </form>
+        <script>
+            let aliasCount = 1;
+            const platformOptions = [
+                'Discord', 'Facebook', 'GitHub', 'Instagram', 'LinkedIn', 'Reddit',
+                'Snapchat', 'Telegram', 'TikTok', 'Twitch', 'X (Formally Twitter)', 'YouTube'
+            ];
+
+            document.getElementById('add-alias-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                const container = document.getElementById('aliases-container');
+                const newSection = document.createElement('div');
+                newSection.className = 'alias-section';
+                newSection.dataset.index = aliasCount;
+
+                let checkboxesHTML = '';
+                platformOptions.forEach(platform => {
+                    checkboxesHTML += `
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="social_media_${aliasCount}" value="${platform}">
+                            <span>${platform}</span>
+                        </label>
+                    `;
+                });
+
+                newSection.innerHTML = `
+                    <label for="alias_${aliasCount}">Online Alias:</label>
+                    <div class="alias-toggle-row">
+                        <input type="text" id="alias_${aliasCount}" name="alias">
+                        <button type="button" class="platforms-toggle toggle-button">Select Platforms</button>
+                        <button type="button" class="remove-alias-btn remove-button">Remove</button>
+                    </div>
+
+                    <div class="social-media-section social-media-hidden">
+                        <label>Social Media Platforms:</label>
+                        <div class="checkbox-group">
+                            ${checkboxesHTML}
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(newSection);
+                attachAliasEvents(newSection);
+                aliasCount++;
+            });
+
+            function attachAliasEvents(section) {
+                const toggleBtn = section.querySelector('.platforms-toggle');
+                const socialMediaSection = section.querySelector('.social-media-section');
+                const removeBtn = section.querySelector('.remove-alias-btn');
+
+                toggleBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    socialMediaSection.classList.toggle('social-media-hidden');
+                    toggleBtn.textContent = socialMediaSection.classList.contains('social-media-hidden') 
+                        ? 'Select Platforms' 
+                        : 'Hide Platforms';
+                });
+
+                if (removeBtn) {
+                    removeBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        section.remove();
+                    });
+                }
+            }
+
+            // Attach events to initial section
+            document.querySelectorAll('.alias-section').forEach(section => {
+                attachAliasEvents(section);
+            });
+
+            // Form validation
+            document.querySelector('form').addEventListener('submit', function(e) {
+                const firstName = document.getElementById('first_name').value.trim();
+                const lastName = document.getElementById('last_name').value.trim();
+                const aliasInputs = document.querySelectorAll('input[name="alias"]');
+                const hasAtLeastOneAlias = Array.from(aliasInputs).some(input => input.value.trim() !== '');
+                
+                if (!firstName && !lastName && !hasAtLeastOneAlias) {
+                    e.preventDefault();
+                    alert('Please fill in at least one field (First Name, Last Name, or an Alias)');
+                }
+            });
+        </script>
+    {% else %}
+        {% include 'loading.html' %}
+        {{ start_thread() }}
+    {% endif %}
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+</body>
+</html>

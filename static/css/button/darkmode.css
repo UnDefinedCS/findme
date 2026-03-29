@@ -1,0 +1,113 @@
+/* Theme Variables - Light and Dark Mode */
+:root {
+    /* Dark mode (default) - Terminal/Hacker theme */
+    --bg-gradient-1: #000000;
+    --bg-gradient-2: #1a1a1a;
+    --bg-gradient-3: #0a2a0a;
+    --bg-gradient-4: #0d0d0d;
+    --bg-gradient-5: #000000;
+    --primary-color: #00ff00;
+    --secondary-color: #00ffff;
+    --text-color: #00ff00;
+    --navbar-bg: rgba(0, 0, 0, 0.7);
+    --form-bg: rgba(0, 0, 0, 0.5);
+    --input-bg: rgba(10, 14, 39, 0.8);
+    --border-color: #00ff00;
+    --shadow-color: rgba(0, 255, 0, 0.4);
+    --hover-shadow: rgba(0, 255, 255, 0.6);
+    --button-gradient-start: #00ff00;
+    --button-gradient-end: #00ccff;
+    --button-text: #0a0e27;
+    --placeholder-color: #00aa00;
+    --remove-button-color: #ff6b6b;
+    --alias-bg: rgba(0, 255, 0, 0.05);
+}
+
+[data-theme="light"] {
+    /* Light mode - Professional clean theme */
+    --bg-gradient-1: #a8c5e3;
+    --bg-gradient-2: #ffffff;
+    --bg-gradient-3: #c5d9ed;
+    --bg-gradient-4: #b8d4f1;
+    --bg-gradient-5: #a8c5e3;
+    --primary-color: #1565c0;
+    --secondary-color: #1565c0;
+    --text-color: #2c3e50;
+    --navbar-bg: rgba(200, 205, 212, 0.98);
+    --form-bg: rgba(255, 255, 255, 0.95);
+    --input-bg: #ffffff;
+    --border-color: #bdbdbd;
+    --shadow-color: rgba(0, 0, 0, 0.08);
+    --hover-shadow: rgba(21, 101, 192, 0.2);
+    --button-gradient-start: #22c55e;
+    --button-gradient-end: #06b6d4;
+    --button-text: #ffffff;
+    --placeholder-color: #9e9e9e;
+    --remove-button-color: #c62828;
+    --alias-bg: rgba(21, 101, 192, 0.04);
+    --label-color: #424242;
+}
+
+/* Theme Toggle Button Styles */
+.theme-switch-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0 16px;
+    border: 2px solid var(--primary-color);
+    border-radius: 4px;
+    background: transparent;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    height: 40px;
+}
+
+.theme-switch-button:hover {
+    background: var(--alias-bg);
+    box-shadow: 0 0 10px var(--hover-shadow);
+    border-color: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+.theme-switch-button:active {
+    transform: translateY(0);
+}
+
+.theme-text {
+    color: var(--primary-color);
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    font-weight: bold;
+    text-shadow: 0 0 5px var(--primary-color);
+    transition: all 0.3s ease;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.theme-switch-button:hover .theme-text {
+    color: var(--secondary-color);
+    text-shadow: 0 0 8px var(--secondary-color);
+}
+
+[data-theme="light"] .theme-text {
+    text-shadow: none;
+}
+
+[data-theme="light"] .theme-switch-label:hover .theme-text {
+    text-shadow: none;
+}
+
+/* Light Mode Specific Overrides */
+[data-theme="light"] label {
+    text-shadow: none;
+}
+
+[data-theme="light"] input[type="checkbox"]:hover + span,
+[data-theme="light"] .checkbox-label:has(input[type="checkbox"]:hover) {
+    text-shadow: none;
+}
+
+[data-theme="light"] input[type="checkbox"]:checked + span,
+[data-theme="light"] .checkbox-label:has(input[type="checkbox"]:checked) {
+    text-shadow: none;
+}
