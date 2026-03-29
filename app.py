@@ -57,7 +57,7 @@ def start_thread():
     if thread != None:
         thread.start()
     else:
-        print("start_thread(): THREAD IS NONETYPE")
+        print("start_thread() ERROR: THREAD IS NONETYPE")
     return ""
 
 @app.route("/about")
