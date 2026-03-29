@@ -116,7 +116,6 @@ form {
 
 label {
     font-weight: bold;
-    margin-top: 10px;
     color: var(--secondary-color);
     text-shadow: 0 0 5px var(--secondary-color);
 }

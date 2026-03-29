@@ -51,9 +51,10 @@
 .theme-switch-label {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
     cursor: pointer;
-    padding: 8px 16px;
+    padding: 0 16px;
     border: 2px solid var(--primary-color);
     border-radius: 4px;
     background: transparent;
@@ -65,6 +66,7 @@
     background: var(--alias-bg);
     box-shadow: 0 0 10px var(--hover-shadow);
     border-color: var(--secondary-color);
+    transform: translateY(-2px);
 }
 
 .theme-checkbox {
@@ -110,6 +112,8 @@
     font-weight: bold;
     text-shadow: 0 0 5px var(--primary-color);
     transition: all 0.3s ease;
+    line-height: 1;
+    white-space: nowrap;
 }
 
 .theme-switch-label:hover .theme-text {
