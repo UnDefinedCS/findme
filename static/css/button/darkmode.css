@@ -39,8 +39,8 @@
     --border-color: #bdbdbd;
     --shadow-color: rgba(0, 0, 0, 0.08);
     --hover-shadow: rgba(21, 101, 192, 0.2);
-    --button-gradient-start: #1565c0;
-    --button-gradient-end: #0d47a1;
+    --button-gradient-start: #22c55e;
+    --button-gradient-end: #06b6d4;
     --button-text: #ffffff;
     --placeholder-color: #9e9e9e;
     --remove-button-color: #c62828;
@@ -58,7 +58,7 @@
     border: 2px solid var(--primary-color);
     border-radius: 4px;
     background: transparent;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
     height: 40px;
 }
 
@@ -67,6 +67,10 @@
     box-shadow: 0 0 10px var(--hover-shadow);
     border-color: var(--secondary-color);
     transform: translateY(-2px);
+}
+
+.theme-switch-button:active {
+    transform: translateY(0);
 }
 
 .theme-text {

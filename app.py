@@ -57,30 +57,13 @@ def submit_info():
 
     thread = threading.Thread(target=query_trigger, args=(first_name, last_name, combinedSocialAlias, additionalInfo), daemon=True)
 
-    newCombination = []
-    for i in range(len(social_media)):
-        if(social_media[i][1] != None):
-            for j in range(len(social_media[i][1])):
-                element = [social_media[i][0], social_media[i][1][j]]
-                newCombination.append(element)
-        else:
-            newCombination.append([social_media[i][0], None])
-
-    separatedContext = additionalInfo.split(',', 0)
-
-    u = UserData(
-        FirstName = first_name, 
-        LastName = last_name, 
-        Aliases = newCombination,
-        Context = separatedContext
-    )
-    queries = generate_queries(u)
+    queries = asyncio.run(query_handler(first_name, last_name, social_media, additionalInfo, False))
 
     rendered_index = render_template("index.html", loading=True, start_thread=start_thread, query_num=len(queries))
 
     return rendered_index
 
-async def query_handler(first, last, social, additional):
+async def query_handler(first, last, social, additional, collection = True):
     global results, search_complete, graph_data
     newCombination = []
     for i in range(len(social)):
@@ -100,15 +83,18 @@ async def query_handler(first, last, social, additional):
         Context = separatedContext
     )
     queries = generate_queries(u)
-    data = await collect_data(queries)
-    data = await review(u, data)
-    results = data
+    if collection:
+        data = await collect_data(queries)
+        data = await review(u, data)
+        results = data
 
-    # Generate graph after results are collected
-    if search_params:
-        generate_graph_data(u, data)
-    
-    search_complete = True
+        # Generate graph after results are collected
+        if search_params:
+            generate_graph_data(search_params, data)
+        
+        search_complete = True
+    else:
+        return queries
 
 def query_trigger(first, last, social, additional):
     asyncio.run(query_handler(first, last, social, additional))
