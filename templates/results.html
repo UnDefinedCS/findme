@@ -3,13 +3,19 @@
     <a href="{{ url_for('index') }}">
         <button id="restart">Start Over</button>
     </a>
-    <div id="resultsContent"></div>
+    
+    <div id="resultsContent" class="results-table-wrapper"></div>
+    
     <a href="{{ url_for('index') }}">
         <button id="restart">Start Over</button>
     </a>
 </div>
 
 <style>
+    .results-table-wrapper {
+        margin: 30px 0;
+    }
+
     .results-container {
         display: none;
         padding: 30px;
