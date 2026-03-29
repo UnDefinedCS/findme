@@ -9,6 +9,15 @@ def site_contains(page_content:str, target_str):
     return target_str.lower() in page_content
 
 async def check_site_content(page, base_data:UserData, url: str):
+    global site_cache, ignore_cache
+
+    # init checking
+    if url in ignore_cache:
+        return False,-1
+    
+    if url in site_cache:
+        return True,-1
+
     fName = base_data["FirstName"]
     lName = base_data["LastName"]
     aliases = base_data["Aliases"]
@@ -85,6 +94,8 @@ async def check_site_content(page, base_data:UserData, url: str):
         print(f"{ERR} Url most likely timed out")
         return False,-1
 
+site_cache: list[str] = []
+ignore_cache: list[str] = []
 BATCH_SIZE = 15
 async def run_batch(browser, base_data, batch):
     pages = [await browser.new_page() for _ in batch]
@@ -100,14 +111,13 @@ async def run_batch(browser, base_data, batch):
     return results
 
 async def review(base_data: UserData, results: list[SearchResult]):
+    global site_cache, ignore_cache
+
     print(f"{INFO} Reviewing Discovered Data")
     print(f" |___ number of results: {len(results)}")
 
     acceptable_confidence = 2.5 + (len(base_data["Aliases"]) * 0.3)
     print(f"{INFO} Acceptable Level: {acceptable_confidence}")
-
-    site_cache: list[str] = []
-    ignore_cache: list[str] = []
 
     filtered_results = []
 
@@ -120,14 +130,6 @@ async def review(base_data: UserData, results: list[SearchResult]):
 
                 for result, (high_confidence, score) in zip(batch, batch_results):
                     url = result["url"]
-
-                    if url in site_cache:
-                        filtered_results.append((result,score))
-                        continue
-
-                    if url in ignore_cache:
-                        continue
-
                     if high_confidence:
                         site_cache.append(url)
                         filtered_results.append((result,score))
