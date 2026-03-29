@@ -1,11 +1,9 @@
 from app_types import UserData
 from data_gen import generate_queries, collect_data
+from data_analyze import review
 
 import asyncio
-
-INFO = "[\033[34m!\033[0m] INFO:"
-ERR = "[\033[31m-\033[0m] ERROR:"
-OK = "[\033[32m+\033[0m] OK:"
+from console_feedback import OK,ERR,INFO
 
 def print_all(data: UserData):
    print(data["FirstName"])
@@ -35,7 +33,7 @@ def list_aliases():
             for i in range(1,len(alias)):
                 aliases.append([alias[0],alias[i]])
 
-def prompt():
+async def prompt():
     print(f"{INFO} Enter All Inputs Comma Seperated")
     print(f" |__ To not provide input press ENTER")
     nameData = str(input("First,Last Name: ")).strip()
@@ -55,10 +53,12 @@ def prompt():
 
     #print_all(data)
     queries = generate_queries(data)
-    asyncio.run(collect_data(queries))
+    result_data = await collect_data(queries)
+    output = await review(data, result_data)
+    print(f"{OK} Scanning Finished!")
 
 def main():
-    prompt()
+    asyncio.run(prompt())
 
 if __name__ == "__main__":
     main()

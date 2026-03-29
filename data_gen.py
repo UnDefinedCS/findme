@@ -1,14 +1,10 @@
 import asyncio
 from time import sleep
-from bs4 import BeautifulSoup
 from urllib.parse import quote
 from playwright.async_api import async_playwright
 
 from app_types import UserData, SearchResult
-
-INFO = "[\033[34m!\033[0m] INFO:"
-ERR = "[\033[31m-\033[0m] ERROR:"
-OK = "[\033[32m+\033[0m] OK:"
+from console_feedback import OK,ERR,INFO
 
 def generate_queries(data: UserData):
     queries: list[str] = []
@@ -54,7 +50,7 @@ def generate_queries(data: UserData):
 
     return queries
 
-async def search_duckduckgo(query: str):
+async def search_duckduckgo(query: str) -> {bool, list[SearchResult]}:
     async with async_playwright() as p:
         # at this time it must not be headless or the list cannot be located
         # for unknown reason
@@ -70,7 +66,14 @@ async def search_duckduckgo(query: str):
         if "No results found" in content:
             print(f"{INFO} No results from search")
             await browser.close()
-            return results
+            return True, results
+    
+        # an error occurred, rerun the query incase it is a network problem
+        # resolved via reloading
+        if "we ran into an error" in content:
+            print(f"{INFO} Retrying query")
+            await browser.close()
+            return False, results
 
         try:
             ol = await page.wait_for_selector("ol.react-results--main", timeout=60000)
@@ -78,7 +81,7 @@ async def search_duckduckgo(query: str):
         except:
             print(f"{ERR} No results found or page blocked!")
             await browser.close()
-            return
+            return True, results
 
         anchors = await ol.query_selector_all(
             "article[data-testid='result'] a[data-testid='result-title-a']"
@@ -97,21 +100,31 @@ async def search_duckduckgo(query: str):
                 })
 
         await browser.close()
-        return results
+        return True, results
 
-async def collect_data(queries: list[str]):
+async def collect_data(queries: list[str]) -> list[SearchResult]:
     if (len(queries) == 0):
         print(f"{ERR} No Queries were Generated")
-        return
+        return []
 
     print(f"{INFO} Query Count -> {len(queries)}")
     print("-" * 64)
 
     results_collection: list[SearchResult] = []
     for q in queries:
+        # check if query is an empty string and ignore it
+        if not q.strip(): continue
+
         print(f"Searching -> {q}")
-        results_collection += await search_duckduckgo(q)
+        attempt = 0
+        success, new_results = await search_duckduckgo(q)
+        
+        # allow for limited retries (dont enter infinite retry loop give up at some point)
+        while not success and attempt < 5:
+            attempt += 1
+            success, new_results = await search_duckduckgo(q)
+
+        results_collection += new_results
     print(f"{OK} Total: {len(results_collection)}")
-    for r in results_collection:
-        print(f" |__ {r['query']} -> {r['site_title']} <- {r['url']}")
     print("-" * 64)
+    return results_collection
