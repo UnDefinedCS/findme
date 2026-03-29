@@ -1,5 +1,4 @@
 import asyncio
-from bs4 import BeautifulSoup
 from playwright.async_api import async_playwright
 
 from app_types import UserData, SearchResult
