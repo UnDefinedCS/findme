@@ -69,7 +69,8 @@
                 tableHTML += '<tr>';
                 headers.forEach(header => {
                     const value = result[header];
-                    tableHTML += `<td>${escapeHtml(JSON.stringify(value))}</td>`;
+                    let cellContent = formatCellContent(value);
+                    tableHTML += `<td>${cellContent}</td>`;
                 });
                 tableHTML += '</tr>';
             });
@@ -78,7 +79,8 @@
         } else if (typeof results === 'object' && results !== null) {
             let tableHTML = '<table class="results-table"><thead><tr><th>Key</th><th>Value</th></tr></thead><tbody>';
             Object.entries(results).forEach(([key, value]) => {
-                tableHTML += `<tr><td>${escapeHtml(key)}</td><td>${escapeHtml(JSON.stringify(value))}</td></tr>`;
+                let cellContent = formatCellContent(value);
+                tableHTML += `<tr><td>${escapeHtml(key)}</td><td>${cellContent}</td></tr>`;
             });
             tableHTML += '</tbody></table>';
             resultsContent.innerHTML = tableHTML;
@@ -87,6 +89,21 @@
         }
 
         resultsContainer.classList.add('show');
+    }
+
+    function formatCellContent(value) {
+        const stringValue = JSON.stringify(value);
+        const urlRegex = /(https?:\/\/[^\s"]+)/g;
+        
+        if (urlRegex.test(stringValue)) {
+            return stringValue.replace(urlRegex, (url) => {
+                // Remove trailing quotes or brackets that might be part of JSON
+                let cleanUrl = url.replace(/["'\]]+$/, '');
+                return `<a href="${escapeHtml(cleanUrl)}" target="_blank">${escapeHtml(cleanUrl)}</a>`;
+            });
+        }
+        
+        return escapeHtml(stringValue);
     }
 
     function showNoResults() {
