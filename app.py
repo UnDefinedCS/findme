@@ -12,7 +12,7 @@ search_complete = False
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", loading=False)
 
 @app.route("/", methods=["POST"])
 def submit_info():
@@ -61,15 +61,6 @@ async def query_handler(first, last, social):
     search_complete = True
     print(data)
 
-
-@app.route("/get-results")
-def get_results():
-    global results, search_complete
-    return jsonify({
-        'complete': search_complete,
-        'results': results
-    })
-
 def query_trigger(first, last, social):
     asyncio.run(query_handler(first, last, social))
 
@@ -79,6 +70,14 @@ def start_thread():
     else:
         print("start_thread() ERROR: THREAD IS NONETYPE")
     return ""
+
+@app.route("/get-results")
+def get_results():
+    global results, search_complete
+    return jsonify({
+        'complete': search_complete,
+        'results': results
+    })
 
 @app.route("/about")
 def about_page():
