@@ -1,10 +1,12 @@
 from flask import Flask, render_template, request, jsonify
 from data_gen import generate_queries, collect_data
 from app_types import UserData
+import threading
 import asyncio
+import time
 
 app = Flask(__name__)
-
+thread = None
 
 @app.route("/")
 def index():
@@ -25,9 +27,10 @@ def submit_info():
             element = [alias[i], None]
         combinedSocialAlias.append(element)
 
-    rendered_index = render_template("index.html", loading=True)
+    global thread
+    thread = threading.Thread(target=query_trigger, args=(first_name, last_name, combinedSocialAlias), daemon=True)
 
-    asyncio.run(send_query_to_exe(first_name, last_name, combinedSocialAlias))
+    rendered_index = render_template("index.html", loading=True, start_thread=start_thread)
 
     return rendered_index
 
@@ -47,8 +50,15 @@ async def query_handler(first, last, social):
     queries = generate_queries(u)
     await collect_data(queries)
 
-async def send_query_to_exe(first, last, social):
-    asyncio.create_task(query_handler(first, last, social))
+def query_trigger(first, last, social):
+    asyncio.run(query_handler(first, last, social))
+
+def start_thread():
+    if thread != None:
+        thread.start()
+    else:
+        print("start_thread(): THREAD IS NONETYPE")
+    return ""
 
 @app.route("/about")
 def about_page():
@@ -58,3 +68,6 @@ def about_page():
 @app.route("/loading")
 def animation_test():
     return render_template("loading.html")
+
+if __name__ == '__main__':
+    app.run(debug=True)
