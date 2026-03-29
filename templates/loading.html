@@ -1,5 +1,9 @@
 <div class="loading-container">
     <img id="loadingGif" class="loading-gif" src="{{ url_for('static', filename='images/loading.gif') }}" alt="Loading...">
+    <div id="graphDisplayContainer" class="graph-display-container hidden">
+        <h3>Connection Graph</h3>
+        <div id="graphDisplay"></div>
+    </div>
 </div>
 
 <style>
@@ -9,6 +13,7 @@
         align-items: center;
         min-height: 60vh;
         min-width: 100%;
+        position: relative;
     }
 
     .loading-gif {
@@ -19,6 +24,76 @@
 
     .loading-gif.hidden {
         display: none;
+    }
+
+    .graph-display-container {
+        position: absolute;
+        width: 90%;
+        max-width: 900px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: rgba(0, 20, 20, 0.8);
+        border: 2px solid var(--primary-color);
+        border-radius: 8px;
+        padding: 20px;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+
+    .graph-display-container.show {
+        opacity: 1;
+    }
+
+    .graph-display-container.hidden {
+        display: none;
+    }
+
+    .graph-display-container h3 {
+        color: var(--primary-color);
+        margin: 0 0 15px 0;
+        text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        flex-shrink: 0;
+    }
+
+    #graphDisplay {
+        flex: 1;
+        width: 100%;
+        overflow: auto;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 10px;
+        background: rgba(0, 10, 10, 0.9);
+        border: 1px solid rgba(0, 255, 0, 0.3);
+        border-radius: 4px;
+    }
+
+    #graphDisplay svg {
+        min-width: fit-content;
+        min-height: fit-content;
+        padding: 10px;
+    }
+
+    #graphDisplay::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    #graphDisplay::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 4px;
+    }
+
+    #graphDisplay::-webkit-scrollbar-thumb {
+        background: rgba(0, 255, 0, 0.5);
+        border-radius: 4px;
+    }
+
+    #graphDisplay::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 255, 0, 0.7);
     }
 </style>
 
@@ -34,7 +109,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.complete && data.results) {
-                    displayResults(data.results);
+                    displayResults(data.results, data.graph);
                 } else if (pollAttempts < maxAttempts) {
                     pollAttempts++;
                     setTimeout(pollForResults, pollInterval);
@@ -51,8 +126,10 @@
             });
     }
 
-    function displayResults(results) {
+    function displayResults(results, graphData) {
         const loadingGif = document.getElementById('loadingGif');
+        const graphDisplayContainer = document.getElementById('graphDisplayContainer');
+        const graphDisplay = document.getElementById('graphDisplay');
         const resultsContainer = document.getElementById('resultsContainer');
         const resultsContent = document.getElementById('resultsContent');
 
@@ -86,6 +163,13 @@
             resultsContent.innerHTML = tableHTML;
         } else {
             resultsContent.innerHTML = '<p class="no-results">No results found.</p>';
+        }
+
+        // Display graph in loading container if available
+        if (graphData) {
+            graphDisplay.innerHTML = graphData;
+            graphDisplayContainer.classList.remove('hidden');
+            graphDisplayContainer.classList.add('show');
         }
 
         resultsContainer.classList.add('show');
