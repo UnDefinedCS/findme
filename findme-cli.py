@@ -50,6 +50,9 @@ def list_context() -> list[str]:
     return ctx
 
 def save_results(results):
+    if results is None: return
+    if len(results) == 0: return
+
     save_data = str(input("Do you want to save [y/N]: ")).lower().strip()
     if len(save_data) == 0:
         return
@@ -91,7 +94,9 @@ async def prompt():
     #print_all(data)
     queries = generate_queries(data)
     result_data = await collect_data(queries)
-    output = await review(data, result_data)
+    output = None
+    if len(result_data) > 0:
+        output = await review(data, result_data)
     print(f"{OK} Scanning Finished!")
     save_results(output)
 
