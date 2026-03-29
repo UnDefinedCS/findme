@@ -16,20 +16,20 @@
 
 body {
     font-family: 'Courier New', monospace;
-    background: linear-gradient(-45deg, #000000, #1a1a1a, #0a2a0a, #0d0d0d, #000000);
+    background: linear-gradient(-45deg, var(--bg-gradient-1), var(--bg-gradient-2), var(--bg-gradient-3), var(--bg-gradient-4), var(--bg-gradient-5));
     background-size: 300% 300%;
     animation: gradientShift 10s ease infinite;
-    color: #00ff00;
+    color: var(--text-color);
     margin: 0;
     padding: 0;
     min-height: 100vh;
 }
 
 .navbar {
-    background: rgba(0, 0, 0, 0.7);
-    border-bottom: 2px solid #00ff00;
+    background: var(--navbar-bg);
+    border-bottom: 2px solid var(--border-color);
     padding: 0;
-    box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
+    box-shadow: 0 0 15px var(--shadow-color);
 }
 
 .navbar-container {
@@ -42,11 +42,11 @@ body {
 }
 
 .navbar-title {
-    color: #00ff00;
+    color: var(--primary-color);
     margin: 0;
     font-size: 24px;
     letter-spacing: 2px;
-    text-shadow: 0 0 10px #00ff00;
+    text-shadow: 0 0 10px var(--primary-color);
     transition: all 0.3s ease;
 }
 
@@ -56,42 +56,47 @@ body {
 }
 
 .navbar-title-link:hover .navbar-title {
-    color: #00ffff;
-    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+    color: var(--secondary-color);
+    text-shadow: 0 0 10px var(--secondary-color), 0 0 20px var(--secondary-color);
     transform: translateY(-2px);
 }
 
 .navbar-menu {
     display: flex;
     gap: 15px;
+    align-items: center;
 }
 
 .nav-button {
     padding: 8px 16px;
     background: transparent;
-    color: #00ff00;
-    border: 2px solid #00ff00;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
     border-radius: 4px;
     cursor: pointer;
     font-family: 'Courier New', monospace;
     font-size: 14px;
     transition: all 0.3s ease;
-    text-shadow: 0 0 5px #00ff00;
+    text-shadow: 0 0 5px var(--primary-color);
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .nav-button:hover {
-    background: rgba(0, 255, 0, 0.1);
-    box-shadow: 0 0 10px rgba(0, 255, 0, 0.6);
-    color: #00ffff;
-    border-color: #00ffff;
-    text-shadow: 0 0 8px #00ffff;
+    background: var(--alias-bg);
+    box-shadow: 0 0 10px var(--hover-shadow);
+    color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    text-shadow: 0 0 8px var(--secondary-color);
 }
 
 h1 {
     text-align: center;
-    text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+    text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
     letter-spacing: 2px;
-    color: #00ff00;
+    color: var(--primary-color);
     max-width: 600px;
     margin: 30px auto 20px;
 }
@@ -100,11 +105,11 @@ form {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    background: rgba(0, 0, 0, 0.5);
+    background: var(--form-bg);
     padding: 30px;
-    border: 2px solid #00ff00;
+    border: 2px solid var(--border-color);
     border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3), inset 0 0 10px rgba(0, 255, 0, 0.1);
+    box-shadow: 0 0 20px var(--shadow-color), inset 0 0 10px var(--shadow-color);
     max-width: 600px;
     margin: 0 auto 50px;
 }
@@ -112,42 +117,42 @@ form {
 label {
     font-weight: bold;
     margin-top: 10px;
-    color: #00ffff;
-    text-shadow: 0 0 5px #00ffff;
+    color: var(--secondary-color);
+    text-shadow: 0 0 5px var(--secondary-color);
 }
 
 input[type="text"],
 input[type="email"],
 select {
     padding: 12px;
-    background: rgba(10, 14, 39, 0.8);
-    border: 1px solid #00ff00;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     font-size: 14px;
-    color: #00ff00;
+    color: var(--text-color);
     font-family: 'Courier New', monospace;
     transition: all 0.3s ease;
-    box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+    box-shadow: 0 0 5px var(--shadow-color);
 }
 
 input[type="text"]:focus,
 input[type="email"]:focus,
 select:focus {
     outline: none;
-    border-color: #00ffff;
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5), inset 0 0 5px rgba(0, 255, 255, 0.2);
-    color: #00ffff;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 15px var(--hover-shadow), inset 0 0 5px var(--hover-shadow);
+    color: var(--secondary-color);
 }
 
 input[type="text"]::placeholder {
-    color: #00aa00;
+    color: var(--placeholder-color);
 }
 
 button {
     padding: 12px 20px;
-    background: linear-gradient(135deg, #00ff00 0%, #00ccff 100%);
-    color: #0a0e27;
-    border: 2px solid #00ffff;
+    background: linear-gradient(135deg, var(--button-gradient-start) 0%, var(--button-gradient-end) 100%);
+    color: var(--button-text);
+    border: 2px solid var(--secondary-color);
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
@@ -155,11 +160,11 @@ button {
     letter-spacing: 1px;
     font-family: 'Courier New', monospace;
     transition: all 0.3s ease;
-    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5), 0 0 20px rgba(0, 204, 255, 0.3);
+    box-shadow: 0 0 10px var(--shadow-color), 0 0 20px var(--hover-shadow);
 }
 
 button:hover {
-    box-shadow: 0 0 20px rgba(0, 255, 0, 0.8), 0 0 30px rgba(0, 204, 255, 0.6);
+    box-shadow: 0 0 20px var(--shadow-color), 0 0 30px var(--hover-shadow);
     transform: translateY(-2px);
 }
 
@@ -170,23 +175,23 @@ button:active {
 .toggle-button {
     padding: 10px 16px;
     background: transparent;
-    color: #00ff00;
-    border: 2px solid #00ff00;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
     border-radius: 4px;
     cursor: pointer;
     font-family: 'Courier New', monospace;
     font-size: 14px;
     font-weight: bold;
     transition: all 0.3s ease;
-    text-shadow: 0 0 5px #00ff00;
+    text-shadow: 0 0 5px var(--primary-color);
 }
 
 .toggle-button:hover {
-    background: rgba(0, 255, 0, 0.1);
-    box-shadow: 0 0 10px rgba(0, 255, 0, 0.6);
-    color: #00ffff;
-    border-color: #00ffff;
-    text-shadow: 0 0 8px #00ffff;
+    background: var(--alias-bg);
+    box-shadow: 0 0 10px var(--hover-shadow);
+    color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    text-shadow: 0 0 8px var(--secondary-color);
 }
 
 .alias-toggle-row {
@@ -212,38 +217,38 @@ button:active {
 .add-alias-button {
     padding: 10px 16px;
     background: transparent;
-    color: #00ff00;
-    border: 2px dashed #00ff00;
+    color: var(--primary-color);
+    border: 2px dashed var(--primary-color);
     border-radius: 4px;
     cursor: pointer;
     font-family: 'Courier New', monospace;
     font-size: 14px;
     font-weight: bold;
     transition: all 0.3s ease;
-    text-shadow: 0 0 5px #00ff00;
+    text-shadow: 0 0 5px var(--primary-color);
     margin-top: 10px;
 }
 
 .add-alias-button:hover {
-    background: rgba(0, 255, 0, 0.1);
-    box-shadow: 0 0 10px rgba(0, 255, 0, 0.6);
-    color: #00ffff;
-    border-color: #00ffff;
-    text-shadow: 0 0 8px #00ffff;
+    background: var(--alias-bg);
+    box-shadow: 0 0 10px var(--hover-shadow);
+    color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    text-shadow: 0 0 8px var(--secondary-color);
 }
 
 .remove-button {
     padding: 8px 12px;
     background: rgba(255, 0, 0, 0.1);
-    color: #ff6b6b;
-    border: 2px solid #ff6b6b;
+    color: var(--remove-button-color);
+    border: 2px solid var(--remove-button-color);
     border-radius: 4px;
     cursor: pointer;
     font-family: 'Courier New', monospace;
     font-size: 12px;
     font-weight: bold;
     transition: all 0.3s ease;
-    text-shadow: 0 0 5px #ff6b6b;
+    text-shadow: 0 0 5px var(--remove-button-color);
 }
 
 .remove-button:hover {
@@ -257,8 +262,8 @@ button:active {
 .alias-section {
     padding: 15px;
     margin: 10px 0;
-    border-left: 3px solid #00ff00;
-    background: rgba(0, 255, 0, 0.05);
+    border-left: 3px solid var(--primary-color);
+    background: var(--alias-bg);
     border-radius: 4px;
 }
 
@@ -275,7 +280,7 @@ button:active {
     align-items: center;
     gap: 10px;
     cursor: pointer;
-    color: #00ff00;
+    color: var(--primary-color);
     font-weight: normal;
     margin-top: 8px;
     text-shadow: none;
@@ -285,14 +290,14 @@ button:active {
 
 input[type="checkbox"]:hover + span,
 .checkbox-label:has(input[type="checkbox"]:hover) {
-    color: #00ffff;
-    text-shadow: 0 0 5px #00ffff;
+    color: var(--secondary-color);
+    text-shadow: 0 0 5px var(--secondary-color);
 }
 
 input[type="checkbox"]:checked + span,
 .checkbox-label:has(input[type="checkbox"]:checked) {
-    color: #00ffff;
-    text-shadow: 0 0 5px #00ffff;
+    color: var(--secondary-color);
+    text-shadow: 0 0 5px var(--secondary-color);
 }
 
 input[type="checkbox"] {
@@ -300,28 +305,28 @@ input[type="checkbox"] {
     -webkit-appearance: none;
     width: 18px;
     height: 18px;
-    border: 2px solid #00ff00;
+    border: 2px solid var(--primary-color);
     border-radius: 3px;
-    background: rgba(10, 14, 39, 0.8);
+    background: var(--input-bg);
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+    box-shadow: 0 0 5px var(--shadow-color);
 }
 
 input[type="checkbox"]:hover {
-    border-color: #00ffff;
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
-    background: rgba(0, 255, 255, 0.1);
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 15px var(--hover-shadow);
+    background: var(--alias-bg);
 }
 
 input[type="checkbox"]:checked {
-    background: linear-gradient(135deg, #00ffff 0%, #00ccff 100%);
-    border-color: #00ffff;
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.8), inset 0 0 5px rgba(0, 255, 255, 0.3);
+    background: linear-gradient(135deg, var(--secondary-color) 0%, var(--button-gradient-end) 100%);
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 15px var(--hover-shadow), inset 0 0 5px var(--hover-shadow);
 }
 
 input[type="checkbox"]:checked:hover {
-    box-shadow: 0 0 20px rgba(0, 255, 255, 1), inset 0 0 8px rgba(0, 255, 255, 0.5);
+    box-shadow: 0 0 20px var(--hover-shadow), inset 0 0 8px var(--hover-shadow);
 }
 
 input[type="checkbox"]:checked::after {
@@ -329,7 +334,7 @@ input[type="checkbox"]:checked::after {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #0a0e27;
+    color: var(--button-text);
     font-weight: bold;
     font-size: 14px;
 }

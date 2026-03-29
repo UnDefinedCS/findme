@@ -2,7 +2,8 @@
 <html>
 <head>
     <title>FindMe - OSINT Tool</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/button/darkmode.css') }}?v=3">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=3">
 </head>
 <body>
     {% include 'nav.html' %}
@@ -174,5 +175,6 @@
         {% include 'loading.html' %}
         {{ start_thread() }}
     {% endif %}
+    <script src="{{ url_for('static', filename='js/theme.js') }}?v=2"></script>
 </body>
 </html>
