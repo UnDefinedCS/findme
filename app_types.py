@@ -8,6 +8,7 @@ class UserData(TypedDict):
     FirstName: str
     LastName: str
     Aliases: list[str]
+    Context: list[str]
 
 class SearchResult(TypedDict):
     """
