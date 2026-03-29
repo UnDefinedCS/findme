@@ -85,7 +85,8 @@ async def check_site_content(page, base_data:UserData, url: str):
         ctx_score = min(ctx_score, 2)
         confidence += ctx_score
 
-        acceptable_confidence = 2.5 + (len(aliases) * 0.3)
+        # avoid extreme number increase from many aliases
+        acceptable_confidence = (2.5 + (len(aliases) * 0.3)) if (2.5 + (len(aliases) * 0.3)) < 3 else 3
         result = "Accepted" if confidence >= acceptable_confidence else "Invalid"
 
         print(f"{INFO} Confidence [{result}] {confidence:.2f} -> {url}")
@@ -116,7 +117,9 @@ async def review(base_data: UserData, results: list[SearchResult]):
     print(f"{INFO} Reviewing Discovered Data")
     print(f" |___ number of results: {len(results)}")
 
-    acceptable_confidence = 2.5 + (len(base_data["Aliases"]) * 0.3)
+    # avoid extreme number increase from many aliases
+    acceptable_confidence = (2.5 + (len(base_data["Aliases"]) * 0.3)) if (2.5 + (len(base_data["Aliases"]) * 0.3)) < 3 else 3
+
     print(f"{INFO} Acceptable Level: {acceptable_confidence}")
 
     filtered_results = []
