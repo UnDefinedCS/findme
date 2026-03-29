@@ -47,12 +47,11 @@
     --alias-bg: rgba(46, 125, 50, 0.05);
 }
 
-/* Theme Toggle Checkbox Styles */
-.theme-switch-label {
+/* Theme Toggle Button Styles */
+.theme-switch-button {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
     cursor: pointer;
     padding: 0 16px;
     border: 2px solid var(--primary-color);
@@ -62,47 +61,11 @@
     height: 40px;
 }
 
-.theme-switch-label:hover {
+.theme-switch-button:hover {
     background: var(--alias-bg);
     box-shadow: 0 0 10px var(--hover-shadow);
     border-color: var(--secondary-color);
     transform: translateY(-2px);
-}
-
-.theme-checkbox {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 18px;
-    height: 18px;
-    border: 2px solid var(--primary-color);
-    border-radius: 3px;
-    background: var(--input-bg);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 0 5px var(--shadow-color);
-    position: relative;
-}
-
-.theme-checkbox:hover {
-    border-color: var(--secondary-color);
-    box-shadow: 0 0 10px var(--hover-shadow);
-}
-
-.theme-checkbox:checked {
-    background: linear-gradient(135deg, var(--secondary-color) 0%, var(--button-gradient-end) 100%);
-    border-color: var(--secondary-color);
-    box-shadow: 0 0 15px var(--hover-shadow);
-}
-
-.theme-checkbox:checked::after {
-    content: '✓';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: var(--button-text);
-    font-weight: bold;
-    font-size: 14px;
 }
 
 .theme-text {
@@ -116,7 +79,7 @@
     white-space: nowrap;
 }
 
-.theme-switch-label:hover .theme-text {
+.theme-switch-button:hover .theme-text {
     color: var(--secondary-color);
     text-shadow: 0 0 8px var(--secondary-color);
 }

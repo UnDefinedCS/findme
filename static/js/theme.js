@@ -7,15 +7,15 @@ root.setAttribute('data-theme', currentTheme);
 updateThemeState(currentTheme);
 
 function updateThemeState(theme) {
-    if (themeToggle && themeText) {
-        themeToggle.checked = theme === 'light';
+    if (themeText) {
         themeText.textContent = theme === 'light' ? 'Light Mode' : 'Dark Mode';
     }
 }
 
 if (themeToggle) {
-    themeToggle.addEventListener('change', () => {
-        const newTheme = themeToggle.checked ? 'light' : 'dark';
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = root.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
         
         root.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
