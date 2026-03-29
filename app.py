@@ -48,7 +48,9 @@ async def query_handler(first, last, social):
         LastName = last, 
         Aliases = newCombination)
     queries = generate_queries(u)
-    await collect_data(queries)
+    data = await collect_data(queries)
+    print(data)
+
 
 def query_trigger(first, last, social):
     asyncio.run(query_handler(first, last, social))
