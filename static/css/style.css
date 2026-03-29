@@ -73,7 +73,7 @@ body {
 }
 
 .nav-button {
-    padding: 8px 16px;
+    padding: 10px 16px;
     background: transparent;
     color: var(--primary-color);
     border: 2px solid var(--primary-color);
@@ -81,12 +81,14 @@ body {
     cursor: pointer;
     font-family: 'Courier New', monospace;
     font-size: 14px;
+    font-weight: bold;
     transition: all 0.3s ease;
     text-shadow: 0 0 5px var(--primary-color);
-    height: 40px;
+    text-decoration: none;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 0 10px var(--shadow-color), 0 0 20px var(--hover-shadow);
 }
 
 .nav-button:hover {
@@ -95,6 +97,7 @@ body {
     color: var(--secondary-color);
     border-color: var(--secondary-color);
     text-shadow: 0 0 8px var(--secondary-color);
+    transform: translateY(-2px);
 }
 
 h1 {
@@ -408,28 +411,14 @@ input[type="checkbox"]:checked::after {
     color: var(--placeholder-color);
 }
 
-[data-theme="light"] button {
-    font-family: 'Courier New', monospace;
-    background: transparent;
-    color: var(--primary-color);
-    border: 2px solid var(--primary-color);
-    box-shadow: 0 0 10px var(--shadow-color), 0 0 20px var(--hover-shadow);
-}
-
-[data-theme="light"] button:hover {
-    background: var(--alias-bg);
-    box-shadow: 0 0 10px var(--hover-shadow);
-    color: var(--secondary-color);
-    border-color: var(--secondary-color);
-    text-shadow: none;
-}
-
 [data-theme="light"] .nav-button {
     background: transparent;
     color: var(--primary-color);
     border: 2px solid var(--primary-color);
     text-shadow: none;
+    text-decoration: none;
     font-family: 'Courier New', monospace;
+    transition: all 0.3s ease;
 }
 
 [data-theme="light"] .nav-button:hover {
