@@ -9,6 +9,21 @@
     {% include 'nav.html' %}
     <h1>FindMe - OSINT Tool</h1>
     {% if not loading %}
+        <details id="helpful-info">
+            <summary>How to Remove Your Data from Search Results</summary>
+            <p>
+                Connections to accounts are often made due to hard-coded linking. This can occur from simple social media account linking or hardcoding a URL on your website.
+            </p>
+            <p>
+                It is recommended to use multiple usernames and try to prevent your accounts from crossing paths. For certain websites, you can control your visibility; it is recommended to set accounts to private so that when search engines crawl your links, they return a 404 Not Found.
+            </p>
+            <p>
+                You can request Google or other search engine providers to remove a search result from their feed if a URL leads to a 404, as it will be considered a dead link.
+            </p>
+            <p>
+                Avoid posting sensitive information on social media as it can be saved and made extremely difficult to remove. Ensure your images do not carry location metadata from your mobile phone camera or show identifiable artifacts that could reveal where the image was taken, especially near your residence.
+            </p>
+        </details>
         <form method="POST">
             <label for="first_name">First Name:</label>
             <input type="text" id="first_name" name="first_name">

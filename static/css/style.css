@@ -30,6 +30,22 @@ body {
     min-height: 100vh;
 }
 
+#helpful-info {
+    text-align: center;
+    padding-bottom: 20px;
+    margin: 0 auto;
+    max-width: 50vw;
+}
+#helpful-info summary {
+    text-align: center;
+    cursor: pointer;
+    font-weight: bold;
+}
+#helpful-info p {
+    text-align: center;
+    margin: 10px auto;
+}
+
 .navbar {
     background: var(--navbar-bg);
     border-bottom: 2px solid var(--border-color);
