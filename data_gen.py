@@ -9,8 +9,8 @@ from console_feedback import OK,ERR,INFO
 def generate_queries(data: UserData):
     queries: list[str] = []
 
-    fName = data["FirstName"]
-    lName = data["LastName"]
+    fName = data["FirstName"].strip()
+    lName = data["LastName"].strip()
     target_ctx = data["Context"]
 
     if (fName):
@@ -20,6 +20,7 @@ def generate_queries(data: UserData):
         queries.append(lName)
 
     if (fName and lName):
+        queries.append(f'{fName} {lName}')
         queries.append(f'"{fName} {lName}"')
         queries.append(f'"{lName}, {fName}"')
         queries.append(f'"{fName} {lName}" site:linkedin.com') # explicitly look for linkedin
@@ -38,6 +39,7 @@ def generate_queries(data: UserData):
             queries.append(f'"{lName}" {ctx}')
         if (fName and lName and ctx):
             queries.append(f'"{fName} {lName}" {ctx}')
+            queries.append(f'{fName} {lName} {ctx}')
 
     # mix alias, name, and ctx
     for username,platform in data["Aliases"]:
@@ -46,17 +48,17 @@ def generate_queries(data: UserData):
         if (fName):
             queries.append(f"{fName} {username}")
 
+        if (fName and lName):
+            queries.append(f"{username} {fName} {lName}")
+
+        if (fName and lName and service_provider):
+            queries.append(f"{username} {fName} {lName} {service_provider}")
+
         if (service_provider and fName):
             queries.append(f"{fName} {service_provider}")
             
         if (service_provider and fName):
             queries.append(f"{username} {fName} {service_provider}")
-
-        if (lName and lName):
-            queries.append(f"{username} {fName} {lName}")
-
-        if (lName and lName and service_provider):
-            queries.append(f"{username} {fName} {lName} {service_provider}")
 
         for ctx in target_ctx:
             queries.append(f"{username} {ctx}")
