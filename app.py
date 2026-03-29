@@ -96,7 +96,6 @@ async def query_handler(first, last, social, additional):
         generate_graph_data(search_params, data)
     
     search_complete = True
-    print(data)
 
 def query_trigger(first, last, social, additional):
     asyncio.run(query_handler(first, last, social, additional))
@@ -119,7 +118,7 @@ def generate_graph_data(search_params, results):
             len([p for p in search_params['platforms'] if p])
         ])
         
-        result_count = min(len(results) if results else 0, 8)
+        result_count = len(results)
         max_nodes_per_side = max(input_count, result_count)
         
         # Organized spacing
@@ -193,8 +192,6 @@ def generate_graph_data(search_params, results):
         
         if results:
             for idx, result in enumerate(results):
-                if result_count_actual >= 8:
-                    break
                 result_node_id = f"result_{idx}"
                 title = result.get('site_title', result.get('url', 'Unknown'))[:20]
                 nodes.append({
