@@ -158,10 +158,13 @@
 
 {% include 'results.html' %}
 
+<div id="accessor" data-query-num="{{ query_num }}"></div>
+
 <script>
     const pollInterval = 500;
     let pollAttempts = 0;
-    const maxAttempts = 240;
+    const queryNum = Number(document.getElementById("accessor").dataset.queryNum);
+    const maxAttempts = 60 * queryNum;
 
     function pollForResults() {
         fetch('/get-results')

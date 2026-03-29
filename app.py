@@ -65,7 +65,26 @@ def submit_info():
 
     thread = threading.Thread(target=query_trigger, args=(first_name, last_name, combinedSocialAlias, additionalInfo), daemon=True)
 
-    rendered_index = render_template("index.html", loading=True, start_thread=start_thread)
+    newCombination = []
+    for i in range(len(social_media)):
+        if(social_media[i][1] != None):
+            for j in range(len(social_media[i][1])):
+                element = [social_media[i][0], social_media[i][1][j]]
+                newCombination.append(element)
+        else:
+            newCombination.append([social_media[i][0], None])
+
+    separatedContext = additionalInfo.split(',', 0)
+
+    u = UserData(
+        FirstName = first_name, 
+        LastName = last_name, 
+        Aliases = newCombination,
+        Context = separatedContext
+    )
+    queries = generate_queries(u)
+
+    rendered_index = render_template("index.html", loading=True, start_thread=start_thread, query_num=len(queries))
 
     return rendered_index
 
