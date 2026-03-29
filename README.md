@@ -29,7 +29,7 @@ cd venv
 source bin/activate
 
 # install python dependencies
-pip install flask playwright
+pip install flask playwright Directed-Graph-Generator
 
 # install playwright
 playwright install
