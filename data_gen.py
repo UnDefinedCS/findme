@@ -3,7 +3,7 @@ from time import sleep
 from urllib.parse import quote
 from playwright.async_api import async_playwright
 
-from app_types import UserData, SearchResult
+from app_types import UserData
 from console_feedback import OK,ERR,INFO
 
 def generate_queries(data: UserData):
@@ -36,6 +36,8 @@ def generate_queries(data: UserData):
             queries.append(f'"{fName}" {ctx}')
         if (lName):
             queries.append(f'"{lName}" {ctx}')
+        if (fName and lName and ctx):
+            queries.append(f'"{fName} {lName}" {ctx}')
 
     # mix alias, name, and ctx
     for username,platform in data["Aliases"]:
@@ -61,81 +63,100 @@ def generate_queries(data: UserData):
 
     return queries
 
-async def search_duckduckgo(query: str) -> {bool, list[SearchResult]}:
-    async with async_playwright() as p:
-        # at this time it must not be headless or the list cannot be located
-        # for unknown reason
-        browser = await p.chromium.launch(headless=False)
-        page = await browser.new_page()
-        results: list[SearchResult] = []
+async def search_duckduckgo(page, query: str):
+    results: list[dict] = []
 
-        url = f"https://duckduckgo.com/?q={quote(query)}&ia=web"
-        await page.goto(url)
+    url = f"https://duckduckgo.com/?q={quote(query)}&ia=web"
+    await page.goto(url)
 
-        # check the contents of the page after search
-        content = await page.content()
-        if "No results found" in content:
-            print(f"{INFO} No results from search")
-            await browser.close()
-            return True, results
-    
-        # an error occurred, rerun the query incase it is a network problem
-        # resolved via reloading
-        if "we ran into an error" in content:
-            print(f"{INFO} Retrying query")
-            await browser.close()
-            return False, results
+    content = await page.content()
 
-        try:
-            ol = await page.wait_for_selector("ol.react-results--main", timeout=60000)
-            print(f"{INFO} Found Results List!")
-        except:
-            print(f"{ERR} No results found or page blocked!")
-            await browser.close()
-            return True, results
-
-        anchors = await ol.query_selector_all(
-            "article[data-testid='result'] a[data-testid='result-title-a']"
-        )
-
-        if not anchors:
-            print(f"{INFO} No anchor elements found!")
-        else:
-            for a in anchors:
-                href = await a.get_attribute("href")
-                title = await a.inner_text()
-                results.append({
-                    "query": query,
-                    "url": href,
-                    "site_title": title
-                })
-
-        await browser.close()
+    if "No results found" in content:
+        print(f"{INFO} No results from search -> {query}")
         return True, results
 
-async def collect_data(queries: list[str]) -> list[SearchResult]:
-    if (len(queries) == 0):
+    if "we ran into an error" in content:
+        print(f"{INFO} Retrying query -> {query}")
+        return False, results
+
+    try:
+        ol = await page.wait_for_selector(
+            "ol.react-results--main", timeout=60000
+        )
+        print(f"{INFO} Found Results List -> {query}")
+    except:
+        print(f"{ERR} No results list or blocked -> {query}")
+        return True, results
+
+    anchors = await ol.query_selector_all(
+        "article[data-testid='result'] a[data-testid='result-title-a']"
+    )
+
+    if not anchors:
+        print(f"{INFO} No anchor elements -> {query}")
+        return True, results
+
+    for a in anchors:
+        href = await a.get_attribute("href")
+        title = await a.inner_text()
+
+        results.append({
+            "query": query,
+            "url": href,
+            "site_title": title
+        })
+
+    return True, results
+
+
+async def send_queries(browser, queries: list[str]) -> list[dict]:
+    pages = [await browser.new_page() for _ in queries]
+    tasks = [
+        asyncio.create_task(search_duckduckgo(pages[i], queries[i]))
+        for i in range(len(queries))
+    ]
+
+    results: list[dict] = []
+    try:
+        for task in asyncio.as_completed(tasks):
+            success, data = await task
+            if success: results.extend(data)
+    finally:
+        for page in pages:
+            await page.close()
+    return results
+
+async def collect_data(queries: list[str]) -> list[dict]:
+    if not queries:
         print(f"{ERR} No Queries were Generated")
         return []
 
     print(f"{INFO} Query Count -> {len(queries)}")
     print("-" * 64)
 
-    results_collection: list[SearchResult] = []
-    for q in queries:
-        # check if query is an empty string and ignore it
-        if not q.strip(): continue
+    results_collection = []
 
-        print(f"Searching -> {q}")
-        attempt = 0
-        success, new_results = await search_duckduckgo(q)
-        
-        # allow for limited retries (dont enter infinite retry loop give up at some point)
-        while not success and attempt < 5:
-            attempt += 1
-            success, new_results = await search_duckduckgo(q)
+    # change this to get more tabs
+    MAX_TABS = 5
+    
+    # safety bounds checking
+    if MAX_TABS <= 0:
+        MAX_TABS = 5
 
-        results_collection += new_results
-    print(f"{OK} Total: {len(results_collection)}")
-    print("-" * 64)
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=False)
+        try:
+            for i in range(0, len(queries), MAX_TABS):
+                q_group = [
+                    q for q in queries[i:i + MAX_TABS]
+                    if q.strip()
+                ]
+
+                if not q_group:
+                    continue
+
+                new_results = await send_queries(browser, q_group)
+                results_collection.extend(new_results)
+        finally:
+            await browser.close()
     return results_collection
