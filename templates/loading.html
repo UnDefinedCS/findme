@@ -235,7 +235,7 @@
     }
 
     function formatCellContent(value) {
-        const stringValue = JSON.stringify(value);
+        let stringValue = JSON.stringify(value);
         const urlRegex = /(https?:\/\/[^\s"]+)/g;
         
         if (urlRegex.test(stringValue)) {
@@ -244,6 +244,23 @@
                 let cleanUrl = url.replace(/["'\]]+$/, '');
                 return `<a href="${escapeHtml(cleanUrl)}" target="_blank">${escapeHtml(cleanUrl)}</a>`;
             });
+        }
+        
+        // Remove escape characters first
+        stringValue = stringValue.replace(/\\/g, '');
+        
+        // Remove outer quotes if it's a simple string
+        if ((stringValue.startsWith('"') && stringValue.endsWith('"')) ||
+            (stringValue.startsWith("'") && stringValue.endsWith("'"))) {
+            stringValue = stringValue.slice(1, -1);
+        }
+        
+        // If it's an array or object, clean up the internal quotes
+        if (stringValue.startsWith('[') || stringValue.startsWith('{')) {
+            // Remove all quotes from the JSON representation
+            stringValue = stringValue.replace(/"/g, '').replace(/'/g, '');
+            // Clean up extra spaces and commas
+            stringValue = stringValue.replace(/,\s*/g, ', ').trim();
         }
         
         return escapeHtml(stringValue);
