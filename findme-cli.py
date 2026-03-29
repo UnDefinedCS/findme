@@ -53,6 +53,8 @@ def save_results(results):
     save_data = str(input("Do you want to save [y/N]: ")).lower().strip()
     if len(save_data) == 0:
         return
+    elif save_data == "n" or save_data == "no":
+        return
     
     file_name = ""
     while len(file_name) == 0:
@@ -61,9 +63,9 @@ def save_results(results):
     with open(file_name,"w") as outFile:
         for r,s in results:
             if s == -1:
-                outFile.write(f"{OK} | {r['query']} -> {r['url']}")
+                outFile.write(f"[+] | {r['query']} -> {r['url']}\n")
             else:
-                outFile.write(f"{OK} Score -> {s} | {r['query']} -> {r['url']}")
+                outFile.write(f"[+] Score -> {s} | {r['query']} -> {r['url']}\n")
 
 async def prompt():
     print(f"{INFO} Enter All Inputs Comma Seperated")
