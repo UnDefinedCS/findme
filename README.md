@@ -1,5 +1,5 @@
 # findme
-OSINT tool developed for KHE 2026 | [⚠️ Liability & Disclaimer](#⚠️-liability--disclaimer)
+OSINT tool developed for KHE 2026 | [⚠️ Liability & Disclaimer](#%EF%B8%8F-liability--disclaimer)
 
 ## About
 The Internet is a large and growing dangerous place, information is scattered everywhere and most are oblivious to this fact.
