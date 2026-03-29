@@ -3,7 +3,6 @@ from data_gen import generate_queries, collect_data
 from app_types import UserData
 import threading
 import asyncio
-import time
 
 app = Flask(__name__)
 thread = None
@@ -34,14 +33,15 @@ def submit_info():
         else:
             element = [alias[i], None]
         combinedSocialAlias.append(element)
+    additionalInfo = request.form['more_context']
 
-    thread = threading.Thread(target=query_trigger, args=(first_name, last_name, combinedSocialAlias), daemon=True)
+    thread = threading.Thread(target=query_trigger, args=(first_name, last_name, combinedSocialAlias, additionalInfo), daemon=True)
 
     rendered_index = render_template("index.html", loading=True, start_thread=start_thread)
 
     return rendered_index
 
-async def query_handler(first, last, social):
+async def query_handler(first, last, social, additional):
     global results, search_complete
     newCombination = []
     for i in range(len(social)):
@@ -51,18 +51,23 @@ async def query_handler(first, last, social):
                 newCombination.append(element)
         else:
             newCombination.append([social[i][0], None])
+
+    separatedContext = additional.split(',', 0)
+
     u = UserData(
         FirstName = first, 
         LastName = last, 
-        Aliases = newCombination)
+        Aliases = newCombination,
+        Context = separatedContext
+    )
     queries = generate_queries(u)
     data = await collect_data(queries)
     results = data
     search_complete = True
     print(data)
 
-def query_trigger(first, last, social):
-    asyncio.run(query_handler(first, last, social))
+def query_trigger(first, last, social, additional):
+    asyncio.run(query_handler(first, last, social, additional))
 
 def start_thread():
     if thread != None:
