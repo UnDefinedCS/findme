@@ -11,6 +11,7 @@ def generate_queries(data: UserData):
 
     fName = data["FirstName"]
     lName = data["LastName"]
+    target_ctx = data["Context"]
 
     if (fName):
         queries.append(fName)
@@ -29,7 +30,14 @@ def generate_queries(data: UserData):
         if (platform):
             queries.append(f"{username} {platform.lower()}")
 
-    # mix alias and name
+    # apply context
+    for ctx in target_ctx:
+        if (fName):
+            queries.append(f'"{fName}" {ctx}')
+        if (lName):
+            queries.append(f'"{lName}" {ctx}')
+
+    # mix alias, name, and ctx
     for username,platform in data["Aliases"]:
         service_provider = platform.lower() if platform else None
         
@@ -47,6 +55,9 @@ def generate_queries(data: UserData):
 
         if (lName and lName and service_provider):
             queries.append(f"{username} {fName} {lName} {service_provider}")
+
+        for ctx in target_ctx:
+            queries.append(f"{username} {ctx}")
 
     return queries
 

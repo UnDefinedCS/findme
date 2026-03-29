@@ -33,6 +33,22 @@ def list_aliases():
             for i in range(1,len(alias)):
                 aliases.append([alias[0],alias[i]])
 
+def list_context() -> list[str]:
+    print(f"{INFO} What is the target context?")
+    print(" |___ Press Enter to Continue")
+    
+    ctx = []
+    while True:
+        ctx_data = str(input("Target Context: "))
+        if ctx_data == "": break
+        ctx.append(ctx_data.strip())
+
+    if len(ctx) == 0:
+        print(f"{INFO} No Context Given")
+        print(" |___ Results may contain many false-positives")
+
+    return ctx
+
 async def prompt():
     print(f"{INFO} Enter All Inputs Comma Seperated")
     print(f" |__ To not provide input press ENTER")
@@ -44,11 +60,14 @@ async def prompt():
         firstName,lastName = nameData.split(',')
 
     aliases = list_aliases()
+
+    target_ctx = list_context()
     
     data: UserData = {
         "FirstName": firstName,
         "LastName": lastName,
-        "Aliases": aliases
+        "Aliases": aliases,
+        "Context": target_ctx
     }
 
     #print_all(data)
