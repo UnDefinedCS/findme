@@ -7,6 +7,8 @@ import time
 
 app = Flask(__name__)
 thread = None
+results = None
+search_complete = False
 
 @app.route("/")
 def index():
@@ -14,6 +16,12 @@ def index():
 
 @app.route("/", methods=["POST"])
 def submit_info():
+    global thread, results, search_complete
+    
+    # Reset results for new search
+    results = None
+    search_complete = False
+    
     first_name = request.form['first_name']
     last_name = request.form['last_name']
     alias = request.form.getlist('alias')
@@ -27,7 +35,6 @@ def submit_info():
             element = [alias[i], None]
         combinedSocialAlias.append(element)
 
-    global thread
     thread = threading.Thread(target=query_trigger, args=(first_name, last_name, combinedSocialAlias), daemon=True)
 
     rendered_index = render_template("index.html", loading=True, start_thread=start_thread)
@@ -35,6 +42,7 @@ def submit_info():
     return rendered_index
 
 async def query_handler(first, last, social):
+    global results, search_complete
     newCombination = []
     for i in range(len(social)):
         if(social[i][1] != None):
@@ -49,8 +57,18 @@ async def query_handler(first, last, social):
         Aliases = newCombination)
     queries = generate_queries(u)
     data = await collect_data(queries)
+    results = data
+    search_complete = True
     print(data)
 
+
+@app.route("/get-results")
+def get_results():
+    global results, search_complete
+    return jsonify({
+        'complete': search_complete,
+        'results': results
+    })
 
 def query_trigger(first, last, social):
     asyncio.run(query_handler(first, last, social))

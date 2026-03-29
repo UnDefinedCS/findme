@@ -1,0 +1,73 @@
+<div id="resultsContainer" class="results-container">
+    <h2 class="results-title">Search Results</h2>
+    <div id="resultsContent"></div>
+</div>
+
+<style>
+    .results-container {
+        display: none;
+        padding: 30px;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+
+    .results-container.show {
+        display: block;
+        opacity: 1;
+    }
+
+    .results-table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: rgba(0, 20, 20, 0.8);
+        border: 2px solid #00ffff;
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    }
+
+    .results-table thead {
+        background-color: rgba(0, 255, 0, 0.1);
+        border-bottom: 2px solid #00ff00;
+    }
+
+    .results-table th {
+        padding: 15px;
+        text-align: left;
+        color: #00ff00;
+        font-weight: bold;
+        border-right: 1px solid #00ff00;
+    }
+
+    .results-table th:last-child {
+        border-right: none;
+    }
+
+    .results-table td {
+        padding: 12px 15px;
+        color: #00ffff;
+        border-right: 1px solid rgba(0, 255, 255, 0.2);
+        border-bottom: 1px solid rgba(0, 255, 0, 0.1);
+    }
+
+    .results-table td:last-child {
+        border-right: none;
+    }
+
+    .results-table tbody tr:hover {
+        background-color: rgba(0, 255, 0, 0.05);
+    }
+
+    .results-title {
+        color: #00ff00;
+        margin-bottom: 30px;
+        text-align: center;
+        font-size: 24px;
+        text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+    }
+
+    .no-results {
+        color: #ff6b6b;
+        text-align: center;
+        padding: 30px;
+        font-size: 18px;
+    }
+</style>

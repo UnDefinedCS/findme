@@ -1,3 +1,108 @@
-<html>
-    <img src="../static/images/loading.gif" style="width: 25%; height: auto; margin-left: 37.5%"></img>
-</html>
+<div class="loading-container">
+    <img id="loadingGif" class="loading-gif" src="{{ url_for('static', filename='images/loading.gif') }}" alt="Loading...">
+</div>
+
+<style>
+    .loading-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 60vh;
+        min-width: 100%;
+    }
+
+    .loading-gif {
+        width: 25%;
+        max-width: 200px;
+        transition: opacity 0.3s ease;
+    }
+
+    .loading-gif.hidden {
+        display: none;
+    }
+</style>
+
+{% include 'results.html' %}
+
+<script>
+    const pollInterval = 500;
+    let pollAttempts = 0;
+    const maxAttempts = 240;
+
+    function pollForResults() {
+        fetch('/get-results')
+            .then(response => response.json())
+            .then(data => {
+                if (data.complete && data.results) {
+                    displayResults(data.results);
+                } else if (pollAttempts < maxAttempts) {
+                    pollAttempts++;
+                    setTimeout(pollForResults, pollInterval);
+                } else {
+                    showNoResults();
+                }
+            })
+            .catch(error => {
+                console.error('Error polling for results:', error);
+                if (pollAttempts < maxAttempts) {
+                    pollAttempts++;
+                    setTimeout(pollForResults, pollInterval);
+                }
+            });
+    }
+
+    function displayResults(results) {
+        const loadingGif = document.getElementById('loadingGif');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const resultsContent = document.getElementById('resultsContent');
+
+        loadingGif.classList.add('hidden');
+
+        if (Array.isArray(results) && results.length > 0) {
+            let tableHTML = '<table class="results-table"><thead><tr>';
+            const headers = Object.keys(results[0]);
+            headers.forEach(header => {
+                tableHTML += `<th>${escapeHtml(header)}</th>`;
+            });
+            tableHTML += '</tr></thead><tbody>';
+            results.forEach(result => {
+                tableHTML += '<tr>';
+                headers.forEach(header => {
+                    const value = result[header];
+                    tableHTML += `<td>${escapeHtml(JSON.stringify(value))}</td>`;
+                });
+                tableHTML += '</tr>';
+            });
+            tableHTML += '</tbody></table>';
+            resultsContent.innerHTML = tableHTML;
+        } else if (typeof results === 'object' && results !== null) {
+            let tableHTML = '<table class="results-table"><thead><tr><th>Key</th><th>Value</th></tr></thead><tbody>';
+            Object.entries(results).forEach(([key, value]) => {
+                tableHTML += `<tr><td>${escapeHtml(key)}</td><td>${escapeHtml(JSON.stringify(value))}</td></tr>`;
+            });
+            tableHTML += '</tbody></table>';
+            resultsContent.innerHTML = tableHTML;
+        } else {
+            resultsContent.innerHTML = '<p class="no-results">No results found.</p>';
+        }
+
+        resultsContainer.classList.add('show');
+    }
+
+    function showNoResults() {
+        const loadingGif = document.getElementById('loadingGif');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const resultsContent = document.getElementById('resultsContent');
+        loadingGif.classList.add('hidden');
+        resultsContent.innerHTML = '<p class="no-results">Search timed out. Please try again.</p>';
+        resultsContainer.classList.add('show');
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    window.addEventListener('load', pollForResults);
+</script>
