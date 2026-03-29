@@ -21,6 +21,7 @@
 
 [data-theme="light"] .about {
     text-shadow: none;
+    color: var(--label-color);
 }
 
 .credits {
@@ -33,23 +34,36 @@
 
 .WhoAreWe {
     font-size: clamp(1.8rem, 3vw, 2.5rem);
-    color: #00ff00;
-    text-shadow: 0 0 10px rgba(0, 255, 0, 0.7), 0 0 20px rgba(0, 255, 0, 0.5);
+    color: var(--primary-color);
+    text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
     text-align: center;
     width: 100%;
     margin-top: 20px;
     margin-bottom: 20px;
 }
 
+[data-theme="light"] .WhoAreWe {
+    text-shadow: none;
+    color: var(--primary-color);
+}
+
 .person-link {
-    color: #00ff00;
+    color: var(--primary-color);
     text-decoration: none;
     border-bottom: 1px solid rgba(0, 255, 0, 0.5);
     transition: color 0.25s ease, border-color 0.25s ease, text-shadow 0.25s ease;
 }
 
 .person-link:hover {
-    color: #00ffff;
-    border-bottom-color: #00ffff;
-    text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+    color: var(--secondary-color);
+    border-bottom-color: var(--secondary-color);
+    text-shadow: 0 0 8px var(--secondary-color);
+}
+
+[data-theme="light"] .person-link {
+    border-bottom-color: var(--border-color);
+}
+
+[data-theme="light"] .person-link:hover {
+    text-shadow: none;
 }

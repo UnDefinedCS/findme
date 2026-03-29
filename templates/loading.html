@@ -95,6 +95,65 @@
     #graphDisplay::-webkit-scrollbar-thumb:hover {
         background: rgba(0, 255, 0, 0.7);
     }
+
+    /* Light mode styles for graph container */
+    [data-theme="light"] .graph-display-container {
+        background: rgba(255, 255, 255, 0.95);
+        border: 2px solid var(--primary-color);
+    }
+
+    [data-theme="light"] .graph-display-container h3 {
+        color: var(--primary-color);
+        text-shadow: none;
+    }
+
+    [data-theme="light"] #graphDisplay {
+        background: rgba(255, 255, 255, 0.98);
+        border: 1px solid var(--border-color);
+    }
+
+    [data-theme="light"] #graphDisplay::-webkit-scrollbar-track {
+        background: rgba(200, 205, 212, 0.3);
+    }
+
+    [data-theme="light"] #graphDisplay::-webkit-scrollbar-thumb {
+        background: rgba(21, 101, 192, 0.5);
+    }
+
+    [data-theme="light"] #graphDisplay::-webkit-scrollbar-thumb:hover {
+        background: rgba(21, 101, 192, 0.7);
+    }
+
+    /* Light mode SVG graph styling */
+    [data-theme="light"] #graphDisplay svg circle {
+        fill: rgba(21, 101, 192, 0.2);
+        stroke: #000000;
+    }
+
+    [data-theme="light"] #graphDisplay .input-node {
+        fill: rgba(21, 101, 192, 0.15);
+        stroke: #000000;
+    }
+
+    [data-theme="light"] #graphDisplay .result-node {
+        fill: rgba(0, 0, 0, 0.1);
+        stroke: #000000;
+    }
+
+    [data-theme="light"] #graphDisplay .edge {
+        stroke: #000000;
+        opacity: 0.5;
+    }
+
+    [data-theme="light"] #graphDisplay text,
+    [data-theme="light"] #graphDisplay .label,
+    [data-theme="light"] #graphDisplay .label-result {
+        fill: #000000;
+    }
+
+    [data-theme="light"] #graphDisplay polygon {
+        fill: #000000;
+    }
 </style>
 
 {% include 'results.html' %}
