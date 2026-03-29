@@ -144,7 +144,13 @@ async def collect_data(queries: list[str]) -> list[dict]:
         MAX_TABS = 5
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=False)
+        browser = await p.chromium.launch(
+            headless=False,
+            args=[
+                '--window-position=-2400,-2400',  # Move window off-screen
+                '--window-size=1,1'  # Minimize window size
+            ]
+        )
         try:
             for i in range(0, len(queries), MAX_TABS):
                 q_group = [
