@@ -7,9 +7,8 @@ The Internet is a large and growing dangerous place, information is scattered ev
 - Terminal CLI
 - Flask App for GUI
 
-This application is made using Python, Flask allows for the best integration of our tool, this application has `NONE` of the following:
+This application is made using Python, Flask allows for the best integration of our tool, while Flask is recognized as a backend framework we are utilizing it in a low capacity, this application has `NONE` of the following:
 - Database (only you can save your results)
-- Backend (Flask just serves HTML pages)
 - Data Distribution (no one but you can see the information you provide as input)
 
 This tool currently does `not` utilize any LLM for data confidence analysis, this tool does not guarantee 100% accuracy.
