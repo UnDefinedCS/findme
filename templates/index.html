@@ -101,7 +101,7 @@
         <script>
             let aliasCount = 1;
             const platformOptions = [
-                'Discord', 'Facebook', 'GitHub', 'Instagram', 'LinkedIn', 'Reddit',
+                'Facebook', 'GitHub', 'Instagram', 'LinkedIn', 'Reddit',
                 'Snapchat', 'Telegram', 'TikTok', 'Twitch', 'X (Formally Twitter)', 'YouTube'
             ];
 
@@ -173,12 +173,24 @@
             document.querySelector('form').addEventListener('submit', function(e) {
                 const firstName = document.getElementById('first_name').value.trim();
                 const lastName = document.getElementById('last_name').value.trim();
+                const hasName = firstName || lastName;
+                
                 const aliasInputs = document.querySelectorAll('input[name="alias"]');
                 const hasAtLeastOneAlias = Array.from(aliasInputs).some(input => input.value.trim() !== '');
                 
-                if (!firstName && !lastName && !hasAtLeastOneAlias) {
+                const moreContext = document.getElementById('more_context').value.trim();
+                const hasContext = moreContext !== '';
+                
+                // If user provided a name, they must provide at least one alias or context
+                if (hasName && !hasAtLeastOneAlias && !hasContext) {
                     e.preventDefault();
-                    alert('Please fill in at least one field (First Name, Last Name, or an Alias)');
+                    alert('If you enter a First or Last Name, you must provide at least one Alias or Context.');
+                }
+                
+                // Original validation: at least one field must be filled
+                if (!firstName && !lastName && !hasAtLeastOneAlias && !hasContext) {
+                    e.preventDefault();
+                    alert('Please fill in at least one field (First Name, Last Name, an Alias, or Context)');
                 }
             });
         </script>
