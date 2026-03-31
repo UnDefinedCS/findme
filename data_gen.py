@@ -74,45 +74,37 @@ def generate_queries(data: UserData, verbose=False):
     return queries
 
 async def search_duckduckgo(page, query: str):
-    results: list[dict] = []
+    results = []
 
     url = f"https://duckduckgo.com/?q={quote(query)}&ia=web"
-    await page.goto(url)
+    await page.goto(url, wait_until="domcontentloaded")
 
-    content = await page.content()
-
-    if "No results found" in content:
-        if (VERBOSE): print(f"{INFO} No results from search -> {query}")
+    if "No results found" in await page.content():
         return True, results
-    
-    # load 3 more pages
+
+    # load more results
     for _ in range(3):
         try:
+            before = await page.locator(
+                "article[data-testid='result']"
+            ).count()
+
             await page.click("text=More Results")
-            await page.wait_for_timeout(2000)
+
+            await page.wait_for_function(
+                """prev => document.querySelectorAll(
+                    "article[data-testid='result']"
+                ).length > prev""",
+                before,
+                timeout=10000
+            )
+
         except:
             break
 
-    if "we ran into an error" in content:
-        if (VERBOSE): print(f"{INFO} Retrying query -> {query}")
-        return False, results
-
-    try:
-        ol = await page.wait_for_selector(
-            "ol.react-results--main", timeout=60000
-        )
-        if (VERBOSE): print(f"{INFO} Found Results List -> {query}")
-    except:
-        if (VERBOSE): print(f"{ERR} No results list or blocked -> {query}")
-        return True, results
-
-    anchors = await ol.query_selector_all(
-        "article[data-testid='result'] a[data-testid='result-title-a']"
+    anchors = await page.query_selector_all(
+        "a[data-testid='result-title-a']"
     )
-
-    if not anchors:
-        if (VERBOSE): print(f"{INFO} No anchor elements -> {query}")
-        return True, results
 
     for a in anchors:
         href = await a.get_attribute("href")
@@ -201,5 +193,4 @@ async def collect_data(queries: list[str]) -> dict:
             better_results[url].append(entry)
         else:
             better_results[url] = [entry]
-
     return better_results

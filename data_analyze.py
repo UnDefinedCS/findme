@@ -47,20 +47,10 @@ def print_progress():
         stdout.flush()
 
 async def check_site_content(page, base_data:UserData, target):
-    global site_cache
-    global ignore_cache
-
     global batch_times
     global avg_batch_time
 
     url, searches = target
-
-    # init checking
-    if url in ignore_cache:
-        return False,-1
-    
-    if url in site_cache:
-        return True,-1
 
     fName = base_data["FirstName"]
     lName = base_data["LastName"]
@@ -69,10 +59,28 @@ async def check_site_content(page, base_data:UserData, target):
 
     try:
         start_time = time.time()
+        
+        try:
+            await page.goto(url, wait_until="networkidle", timeout=30000)
+        except:
+            await page.goto(url, wait_until="domcontentloaded", timeout=30000)
 
-        # networkidle | domcontentloaded
-        await page.goto(url, wait_until="networkidle", timeout=10000)
-        content = await page.inner_text("body")
+        # try reloading the page multiple times
+        for i in range(5):
+            try:
+                content = await page.inner_text("body")
+                break
+            except Exception as e:
+                if i == 5:
+                    print_progress()
+
+                    stdout.write("\n")
+                    stdout.flush()
+                    print(f"{ERR} Url most likely timed out -> {url}")
+                    print(f" |___ '{e}'")
+
+                    return False, -1
+                await page.reload()
         
         if not content:
             return False,-1
@@ -149,13 +157,16 @@ async def check_site_content(page, base_data:UserData, target):
             print(f"{INFO} Confidence [{result}] {confidence:.2f} -> {url}")
         
         return confidence >= acceptable_confidence, confidence
-    except Exception as e:
-        if (VERBOSE): print(f"{ERR} Url most likely timed out")
+    except:
         print_progress()
-        return False,-1
 
-site_cache: list[str] = []
-ignore_cache: list[str] = []
+        stdout.write("\n")
+        stdout.flush()
+        print(f"{ERR} Error Occured -> {url}")
+        print(f" |___ '{e}'")
+        
+        return False, -1
+
 async def run_batch(browser, base_data, batch):
     pages = [await browser.new_page() for _ in batch]
     tasks = [
@@ -175,7 +186,7 @@ async def review(base_data: UserData, results: dict, using_flask=True, verbose=F
     VERBOSE = verbose
     FROM_FLASK = using_flask
     
-    global site_cache, ignore_cache, SEARCH_SIZE
+    global SEARCH_SIZE
 
     print(f"{INFO} Reviewing Discovered Data")
     print(f" |___ Total URLs Found: {len(results)}")
@@ -183,8 +194,7 @@ async def review(base_data: UserData, results: dict, using_flask=True, verbose=F
     # avoid extreme number increase from many aliases
     acceptable_confidence = (2.5 + (len(base_data["Aliases"]) * 0.3)) if (2.5 + (len(base_data["Aliases"]) * 0.3)) < 3 else 3
 
-    if (VERBOSE):
-        print(f"{INFO} Acceptable Level: {acceptable_confidence}")
+    print(f"{INFO} Acceptable Level: {acceptable_confidence}")
 
     # convert the dict into an iterable object
     # [ ( "example.com", [obj1, obj2, ...] ), ... ]
@@ -204,11 +214,7 @@ async def review(base_data: UserData, results: dict, using_flask=True, verbose=F
                     # query_group is a list of dictionarys
                     url, query_group = search_target
                     if high_confidence:
-                        site_cache.append(url)
                         filtered_results.append((query_group,score))
-                    else:
-                        if score != -1 and score <= 0.5:
-                            ignore_cache.append(url)
             stdout.write("\n")
             stdout.flush()
         finally:
