@@ -1,15 +1,59 @@
+import math
+import time
 import asyncio
 from playwright.async_api import async_playwright
 
-from app_types import UserData, SearchResult
+from app_types import UserData
 from console_feedback import OK,ERR,INFO
+
+# change this to run more confidence checks concurrently
+BATCH_SIZE = 20
+VERBOSE = False
+FROM_FLASK = True
+
+from sys import stdout
+done_count = 0
+SEARCH_SIZE = 0
+avg_batch_time = None
+batch_times = []
 
 def site_contains(page_content:str, target_str):
     if not target_str: return False
     return target_str.lower() in page_content
 
-async def check_site_content(page, base_data:UserData, url: str):
-    global site_cache, ignore_cache
+def print_progress():
+    if FROM_FLASK:
+        return
+    
+    global done_count
+    done_count += 1
+
+    if (VERBOSE == False):
+        # clear current line
+        stdout.write("\r\033[K")
+        stdout.flush()
+
+        bar_width = 30
+        filled = int((done_count / SEARCH_SIZE) * bar_width)
+        prog_str = "=" * filled + " " * (bar_width - filled)
+        stdout.write(f"[{prog_str}] {done_count}/{SEARCH_SIZE}")
+        if avg_batch_time != None:
+            remaining_urls = SEARCH_SIZE - done_count
+            remaining_batches = math.ceil(remaining_urls / BATCH_SIZE)
+            time_left = remaining_batches * avg_batch_time
+
+            mins, secs = divmod(int(time_left), 60)
+            stdout.write(f" | Time Remaining: {mins}m {secs}s")
+        stdout.flush()
+
+async def check_site_content(page, base_data:UserData, target):
+    global site_cache
+    global ignore_cache
+
+    global batch_times
+    global avg_batch_time
+
+    url, searches = target
 
     # init checking
     if url in ignore_cache:
@@ -24,6 +68,8 @@ async def check_site_content(page, base_data:UserData, url: str):
     context = base_data["Context"]
 
     try:
+        start_time = time.time()
+
         # networkidle | domcontentloaded
         await page.goto(url, wait_until="networkidle", timeout=10000)
         content = await page.inner_text("body")
@@ -87,67 +133,94 @@ async def check_site_content(page, base_data:UserData, url: str):
 
         # avoid extreme number increase from many aliases
         acceptable_confidence = (2.5 + (len(aliases) * 0.3)) if (2.5 + (len(aliases) * 0.3)) < 3 else 3
-        result = "Accepted" if confidence >= acceptable_confidence else "Invalid"
+        result = "\033[32mAccepted\033[0m" if confidence >= acceptable_confidence else "Invalid"
 
-        print(f"{INFO} Confidence [{result}] {confidence:.2f} -> {url}")
+        batch_duration = time.time() - start_time
+
+        batch_times.append(batch_duration)
+        avg_batch_time = sum(batch_times) / len(batch_times)
+
+        print_progress()
+
+        # show positive hits
+        if (confidence >= acceptable_confidence or VERBOSE):
+            stdout.write("\n")
+            stdout.flush()
+            print(f"{INFO} Confidence [{result}] {confidence:.2f} -> {url}")
+        
         return confidence >= acceptable_confidence, confidence
     except Exception as e:
-        print(f"{ERR} Url most likely timed out")
+        if (VERBOSE): print(f"{ERR} Url most likely timed out")
+        print_progress()
         return False,-1
 
 site_cache: list[str] = []
 ignore_cache: list[str] = []
-BATCH_SIZE = 15
 async def run_batch(browser, base_data, batch):
     pages = [await browser.new_page() for _ in batch]
     tasks = [
-        check_site_content(pages[i], base_data, batch[i]["url"])
+        check_site_content(pages[i], base_data, batch[i])
         for i in range(len(batch))
     ]
 
+    # collection of (true|false, confidence_score)
     results = await asyncio.gather(*tasks)
     for page in pages:
         await page.close()
 
     return results
 
-async def review(base_data: UserData, results: list[SearchResult]):
-    global site_cache, ignore_cache
+async def review(base_data: UserData, results: dict, using_flask=True, verbose=False) -> list:
+    global VERBOSE,FROM_FLASK
+    VERBOSE = verbose
+    FROM_FLASK = using_flask
+    
+    global site_cache, ignore_cache, SEARCH_SIZE
 
     print(f"{INFO} Reviewing Discovered Data")
-    print(f" |___ number of results: {len(results)}")
+    print(f" |___ Total URLs Found: {len(results)}")
 
     # avoid extreme number increase from many aliases
     acceptable_confidence = (2.5 + (len(base_data["Aliases"]) * 0.3)) if (2.5 + (len(base_data["Aliases"]) * 0.3)) < 3 else 3
 
-    print(f"{INFO} Acceptable Level: {acceptable_confidence}")
+    if (VERBOSE):
+        print(f"{INFO} Acceptable Level: {acceptable_confidence}")
 
+    # convert the dict into an iterable object
+    # [ ( "example.com", [obj1, obj2, ...] ), ... ]
+    search_group = list(results.items())
     filtered_results = []
 
+    SEARCH_SIZE = len(search_group)
+
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
+        browser = await p.chromium.launch(headless=True, args=["--disable-gpu", "--disable-extensions", "--no-sandbox"])
         try:
-            for i in range(0, len(results), BATCH_SIZE):
-                batch = results[i:i + BATCH_SIZE]
+            for i in range(0, len(search_group), BATCH_SIZE):
+                batch = search_group[i:i + BATCH_SIZE]
                 batch_results = await run_batch(browser, base_data, batch)
 
-                for result, (high_confidence, score) in zip(batch, batch_results):
-                    url = result["url"]
+                for search_target, (high_confidence, score) in zip(batch, batch_results):
+                    # query_group is a list of dictionarys
+                    url, query_group = search_target
                     if high_confidence:
                         site_cache.append(url)
-                        filtered_results.append((result,score))
+                        filtered_results.append((query_group,score))
                     else:
                         if score != -1 and score <= 0.5:
                             ignore_cache.append(url)
+            stdout.write("\n")
+            stdout.flush()
         finally:
             await browser.close()
 
-    print(f"{INFO} Filtered Results: {len(results)} -> {len(filtered_results)}")
+    print(f"{INFO} Filtered URLs: {len(results)} -> {len(filtered_results)}")
     print("-" * 64)
-    for r,s in filtered_results:
-        if s == -1:
-            print(f"{OK} | {r['query']} -> {r['url']}")
-        else:
-            print(f"{OK} Score -> {s} | {r['query']} -> {r['url']}")
+    for q_group, score in filtered_results:
+        for r in q_group:
+            if score == -1:
+                print(f"{OK} | {r['query']} -> {r['url']}")
+            else:
+                print(f"{OK} Score -> {score} | {r['query']} -> {r['url']}")
     print("-" * 64)
     return filtered_results

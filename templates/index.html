@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>FindMe - OSINT Tool</title>
+    <title id="title-box">FindMe - OSINT Tool</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/button/darkmode.css') }}?v=7">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=7">
 </head>
@@ -22,6 +22,11 @@
             </p>
             <p>
                 Avoid posting sensitive information on social media as it can be saved and made extremely difficult to remove. Ensure your images do not carry location metadata from your mobile phone camera or show identifiable artifacts that could reveal where the image was taken, especially near your residence.
+            </p>
+        </details><details id="helpful-info">
+            <summary>Are my inputs and outputs tracked?</summary>
+            <p>
+                NEVER! We did not build this project with the intentions to collect any form of user data. Your inputs and outputs stay with you 100%. We have no database either.
             </p>
         </details>
         <form method="POST">
