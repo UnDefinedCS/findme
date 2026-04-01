@@ -157,7 +157,7 @@ async def check_site_content(page, base_data:UserData, target):
             print(f"{INFO} Confidence [{result}] {confidence:.2f} -> {url}")
         
         return confidence >= acceptable_confidence, confidence
-    except:
+    except Exception as e:
         print_progress()
 
         stdout.write("\n")

@@ -6,6 +6,7 @@ from playwright.async_api import async_playwright
 
 from app_types import UserData,SearchResult
 from console_feedback import OK,ERR,INFO
+from url_handler import extractGitHub
 
 # change this to get more tabs
 MAX_TABS = 5
@@ -189,6 +190,20 @@ async def collect_data(queries: list[str]) -> dict:
     better_results = {}
     for entry in results_collection:
         url = entry["url"]
+
+        # try extracting user profile from a github repo url
+        if "//github.com/" in url:
+            profile_url = extractGitHub(url)
+            know_gh_profile = (profile_url in better_results)
+
+            # if we extracted a profile, see if we arent already
+            # tracking it in our url collection and move entrys
+            # respectively
+            if profile_url and know_gh_profile:
+                better_results[profile_url].append(entry)
+            elif profile_url and know_gh_profile == False:
+                better_results[profile_url] = [entry]
+
         if url in better_results:
             better_results[url].append(entry)
         else:
