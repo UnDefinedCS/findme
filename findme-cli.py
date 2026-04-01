@@ -5,6 +5,8 @@ from data_analyze import review
 import asyncio
 from console_feedback import OK,ERR,INFO
 
+VERBOSE = False
+
 def print_all(data: UserData):
    print(data["FirstName"])
    print(data["LastName"])
@@ -12,9 +14,10 @@ def print_all(data: UserData):
 
 def list_aliases():
     aliases = []
+    print(f"{INFO} Enter All Inputs Comma Seperated")
     print(f"{INFO} Format: alias,[github,reddit,twitter,...]")
-    print(" |___ Example: ihatewindows11,reddit\n") # give spacing between the new info
-    print(f"{INFO} When finished press Enter to continue.")
+    print(" |___ Example: ihatewindows11,reddit or iluwlinux,github,reddit")
+    print(" |___ Press Enter to Continue\n")
 
     while True:
         data = str(input("Online Alias: ")).strip()
@@ -34,8 +37,10 @@ def list_aliases():
                 aliases.append([alias[0].strip(), alias[i].strip()])
 
 def list_context() -> list[str]:
+    print(f"{INFO} Enter All Inputs Comma Seperated")
     print(f"{INFO} What is the target context?")
-    print(" |___ Press Enter to Continue")
+    print(" |___ Example: Kent State or Kent State, Alumni")
+    print(" |___ Press Enter to Continue\n")
     
     ctx = []
     while True:
@@ -72,44 +77,56 @@ def save_results(results):
 
 async def prompt():
     print(f"{INFO} Enter All Inputs Comma Seperated")
-    print(f" |__ To not provide input press ENTER")
-    nameData = str(input("First,Last Name: ")).strip()
-    firstName = nameData
-    lastName = None
-    
-    if "," in nameData:
-        firstName,lastName = nameData.split(',')
+    print(f"{INFO} To not provide input press ENTER")
+    firstName = input("First Name: ")
+    lastName = input("Last Name: ")
+
+    # most times having a first/last name is not enough information (too vague)
+    if firstName or lastName:
+        print(f"\n{INFO} Recommanded: Add either an alias or context, otherwise you may get little to no results.")
 
     aliases = list_aliases()
 
     target_ctx = list_context()
+
+    # handle no inputs
+    if not firstName and not lastName and not aliases and not target_ctx:
+        print(f"{INFO} No input was given, nothing to search")
+        return
     
     data: UserData = {
-        "FirstName": firstName.strip(),
-        "LastName": lastName.strip(),
+        "FirstName": firstName.strip() if lastName else None,
+        "LastName": lastName.strip() if lastName else None,
         "Aliases": aliases,
         "Context": target_ctx
     }
 
-    #print_all(data)
-    queries = generate_queries(data)
+    global VERBOSE
+    queries = generate_queries(data, VERBOSE)
     result_data = await collect_data(queries)
     output = None
     if len(result_data) > 0:
-        output = await review(data, result_data)
+        output = await review(data, result_data, False, VERBOSE)
     print(f"{OK} Scanning Finished!")
+    print(" |___ Results are not guaranteed to be 100% accurate, user must manually evaluate")
     save_results(output)
 
-import sys
+import argparse
 def main():
-    if len(sys.argv) == 2 and (str(sys.argv[1]) == "--help" or str(sys.argv[1]) == "-h"):
-        print(f"Usage: {sys.argv[0]} [option]\n")
-        print("  Options:")
-        print("  -h/--help              Show this Page")
-        print("  --data-removal         Learn how to remove your data\n")
-        return
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-v", "--verbose",
+        action="store_true",
+        help="Show Verbose Output"
+    )
+    parser.add_argument(
+        "--data-removal",
+        action="store_true",
+        help="Learn how to remove your data"
+    )
+    args = parser.parse_args()
     
-    if len(sys.argv) == 2 and str(sys.argv[1]) == "--data-removal":
+    if args.data_removal:
         print("""
 How can I remove my data from these search results?
 
@@ -120,6 +137,8 @@ You can request Google or other Engine Providers to remove a search result from 
 do not carry location meta-data from your mobile phone camera or show potential artifacts that can be used to figure out where the image was taken if near your residence.
 """)
     else:
+        global VERBOSE
+        VERBOSE = args.verbose
         asyncio.run(prompt())
 
 if __name__ == "__main__":

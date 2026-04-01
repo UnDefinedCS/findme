@@ -1,5 +1,8 @@
 <div class="loading-container">
-    <img id="loadingGif" class="loading-gif" src="{{ url_for('static', filename='images/loading.gif') }}" alt="Loading...">
+    <div style="gap: 8px; text-align: center;">
+        <h3 id="wait-text">Will take a few minutes. . .</h3>
+        <img id="loadingGif" class="loading-gif" src="{{ url_for('static', filename='images/loading.gif') }}" alt="Loading...">
+    </div>
     <div id="graphDisplayContainer" class="graph-display-container hidden">
         <h3>Connection Graph</h3>
         <div id="graphDisplay"></div>
@@ -191,42 +194,67 @@
 
     function displayResults(results, graphData) {
         const loadingGif = document.getElementById('loadingGif');
+        loadingGif.classList.add('hidden');
+
+        const loadText = document.getElementById('wait-text');
+        loadText.classList.add('hidden');
+
         const graphDisplayContainer = document.getElementById('graphDisplayContainer');
         const graphDisplay = document.getElementById('graphDisplay');
         const resultsContainer = document.getElementById('resultsContainer');
         const resultsContent = document.getElementById('resultsContent');
 
-        loadingGif.classList.add('hidden');
 
         if (Array.isArray(results) && results.length > 0) {
-            let tableHTML = '<table class="results-table"><thead><tr>';
-            console.log(results);
-            const headers = Object.keys(results[0][0]);
-            headers.forEach(header => {
-                tableHTML += `<th>${escapeHtml(header)}</th>`;
-            });
-            tableHTML += '</tr></thead><tbody>';
-            results.forEach(result => {
-                tableHTML += '<tr>';
-                headers.forEach(header => {
-                    const value = result[0][header];
-                    let cellContent = formatCellContent(value);
-                    tableHTML += `<td>${cellContent}</td>`;
+            const firstEntry = results[0][0][0];
+            const headers = Object.keys(firstEntry);
+
+            let tableHTML = `
+                <table class="results-table">
+                <thead>
+                    <tr>
+                        ${headers.map(h => `<th>${escapeHtml(h)}</th>`).join("")}
+                    </tr>
+                </thead>
+                <tbody>
+            `;
+            results.forEach(([entries]) => {
+                entries.forEach(entry => {
+                    tableHTML += "<tr>";
+
+                    headers.forEach(header => {
+                        const value = entry[header];
+                        const cellContent = formatCellContent(value);
+                        tableHTML += `<td>${cellContent}</td>`;
+                    });
+
+                    tableHTML += "</tr>";
                 });
-                tableHTML += '</tr>';
             });
-            tableHTML += '</tbody></table>';
+
+            tableHTML += "</tbody></table>";
             resultsContent.innerHTML = tableHTML;
-        } else if (typeof results === 'object' && results !== null) {
-            let tableHTML = '<table class="results-table"><thead><tr><th>Key</th><th>Value</th></tr></thead><tbody>';
+        } else if (typeof results === "object" && results !== null) {
+            let tableHTML = `
+                <table class="results-table">
+                <thead>
+                    <tr><th>Key</th><th>Value</th></tr>
+                </thead>
+                <tbody>
+            `;
             Object.entries(results).forEach(([key, value]) => {
-                let cellContent = formatCellContent(value);
-                tableHTML += `<tr><td>${escapeHtml(key)}</td><td>${cellContent}</td></tr>`;
+                const cellContent = formatCellContent(value);
+                tableHTML += `<tr>
+                    <td>${escapeHtml(key)}</td>
+                    <td>${cellContent}</td>
+                </tr>`;
             });
-            tableHTML += '</tbody></table>';
+
+            tableHTML += "</tbody></table>";
             resultsContent.innerHTML = tableHTML;
         } else {
-            resultsContent.innerHTML = '<p class="no-results">No results found.</p>';
+            resultsContent.innerHTML =
+                '<p class="no-results">No results found.</p>';
         }
 
         // Display graph in loading container if available
@@ -273,9 +301,13 @@
 
     function showNoResults() {
         const loadingGif = document.getElementById('loadingGif');
+        loadingGif.classList.add('hidden');
+
+        const loadText = document.getElementById('wait-text');
+        loadText.classList.add('hidden');
+        
         const resultsContainer = document.getElementById('resultsContainer');
         const resultsContent = document.getElementById('resultsContent');
-        loadingGif.classList.add('hidden');
         resultsContent.innerHTML = '<p class="no-results">Search timed out. Please try again.</p>';
         resultsContainer.classList.add('show');
     }

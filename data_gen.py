@@ -1,12 +1,21 @@
+import math
 import asyncio
-from time import sleep
+from time import sleep, time
 from urllib.parse import quote
 from playwright.async_api import async_playwright
 
-from app_types import UserData
+from app_types import UserData,SearchResult
 from console_feedback import OK,ERR,INFO
+from url_handler import extractGitHub
 
-def generate_queries(data: UserData):
+# change this to get more tabs
+MAX_TABS = 5
+VERBOSE = False
+
+def generate_queries(data: UserData, verbose=False):
+    global VERBOSE
+    VERBOSE = verbose
+
     queries: list[str] = []
 
     fName = data["FirstName"].strip()
@@ -66,37 +75,37 @@ def generate_queries(data: UserData):
     return queries
 
 async def search_duckduckgo(page, query: str):
-    results: list[dict] = []
+    results = []
 
     url = f"https://duckduckgo.com/?q={quote(query)}&ia=web"
-    await page.goto(url)
+    await page.goto(url, wait_until="domcontentloaded")
 
-    content = await page.content()
-
-    if "No results found" in content:
-        print(f"{INFO} No results from search -> {query}")
+    if "No results found" in await page.content():
         return True, results
 
-    if "we ran into an error" in content:
-        print(f"{INFO} Retrying query -> {query}")
-        return False, results
+    # load more results
+    for _ in range(3):
+        try:
+            before = await page.locator(
+                "article[data-testid='result']"
+            ).count()
 
-    try:
-        ol = await page.wait_for_selector(
-            "ol.react-results--main", timeout=60000
-        )
-        print(f"{INFO} Found Results List -> {query}")
-    except:
-        print(f"{ERR} No results list or blocked -> {query}")
-        return True, results
+            await page.click("text=More Results")
 
-    anchors = await ol.query_selector_all(
-        "article[data-testid='result'] a[data-testid='result-title-a']"
+            await page.wait_for_function(
+                """prev => document.querySelectorAll(
+                    "article[data-testid='result']"
+                ).length > prev""",
+                before,
+                timeout=10000
+            )
+
+        except:
+            break
+
+    anchors = await page.query_selector_all(
+        "a[data-testid='result-title-a']"
     )
-
-    if not anchors:
-        print(f"{INFO} No anchor elements -> {query}")
-        return True, results
 
     for a in anchors:
         href = await a.get_attribute("href")
@@ -128,26 +137,23 @@ async def send_queries(browser, queries: list[str]) -> list[dict]:
             await page.close()
     return results
 
-async def collect_data(queries: list[str]) -> list[dict]:
+async def collect_data(queries: list[str]) -> dict:
     if not queries:
-        print(f"{ERR} No Queries were Generated")
+        if (VERBOSE): print(f"{ERR} No Queries were Generated")
         return []
 
-    print(f"{INFO} Query Count -> {len(queries)}")
+    print(f"{INFO} Generated {len(queries)} Search Queries")
     print("-" * 64)
 
-    results_collection = []
+    results_collection: list[SearchResult] = []
 
-    # change this to get more tabs
-    MAX_TABS = 5
-    
-    # safety bounds checking
-    if MAX_TABS <= 0:
-        MAX_TABS = 5
+    find_times = []
+    find_avg = 0
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=False)
+        browser = await p.chromium.launch(headless=False, args=["--disable-gpu", "--disable-extensions", "--no-sandbox"])
         try:
+            finished = 0
             for i in range(0, len(queries), MAX_TABS):
                 q_group = [
                     q for q in queries[i:i + MAX_TABS]
@@ -157,8 +163,49 @@ async def collect_data(queries: list[str]) -> list[dict]:
                 if not q_group:
                     continue
 
+                start_time = time()
                 new_results = await send_queries(browser, q_group)
+                batch_time = time() - start_time
+
+                finished += len(q_group)
+
+                find_times.append(batch_time)
+                find_avg = sum(find_times) / len(find_times)
+
                 results_collection.extend(new_results)
+
+                remaining_queries = len(queries) - finished
+                remaining_batches = math.ceil(remaining_queries / MAX_TABS)
+                time_left = remaining_batches * find_avg
+
+                mins, secs = divmod(int(time_left), 60)
+                print(f"{INFO} Time Remaining: {mins}m {secs}s")
         finally:
             await browser.close()
-    return results_collection
+
+    # map the results via a map where the URL is the key and the value is
+    # a list of SearchResults because many queries can produce the same
+    # URL target
+
+    better_results = {}
+    for entry in results_collection:
+        url = entry["url"]
+
+        # try extracting user profile from a github repo url
+        if "//github.com/" in url:
+            profile_url = extractGitHub(url)
+            know_gh_profile = (profile_url in better_results)
+
+            # if we extracted a profile, see if we arent already
+            # tracking it in our url collection and move entrys
+            # respectively
+            if profile_url and know_gh_profile:
+                better_results[profile_url].append(entry)
+            elif profile_url and know_gh_profile == False:
+                better_results[profile_url] = [entry]
+
+        if url in better_results:
+            better_results[url].append(entry)
+        else:
+            better_results[url] = [entry]
+    return better_results
